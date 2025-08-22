@@ -261,3 +261,12 @@
     pointer-events: none;
   }
 }
+@font-face {
+  font-family: "CyberFont";
+  src: url("public/fonts/NightPumpkind-1GpGv.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+.font-cyber {
+  font-family: "CyberFont", sans-serif;
+}

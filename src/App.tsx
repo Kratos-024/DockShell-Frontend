@@ -1,22 +1,15 @@
-import "./App.css";
-import { FeatureSection } from "./components/FeatureSection";
-import { Footer } from "./components/Footer";
-import { HeroSection } from "./components/HeroSection";
-import { NavBar } from "./components/NavBar";
-import { StatsSection } from "./components/StatsSection";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HomePage } from "./pages/HomePage";
+import { CtfPage } from "./pages/CtfPage";
 
 function App() {
   return (
-    <div
-      className=" bg-gradient-to-br
-     from-background via-card to-background"
-    >
-      <NavBar />
-      <HeroSection />
-      <FeatureSection />
-      <StatsSection />
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<HomePage />} path="/"></Route>
+        <Route element={<CtfPage />} path="/ctf"></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
