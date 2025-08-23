@@ -1,4 +1,12 @@
-export const NavBar = () => {
+import { CiMenuFries } from "react-icons/ci";
+
+export const NavBar = ({
+  menuHandler,
+  menu = true,
+}: {
+  menu: boolean;
+  menuHandler: () => void;
+}) => {
   return (
     <section className="bg-background inset-x-0 top-0 z-20">
       <div className="container">
@@ -8,11 +16,18 @@ export const NavBar = () => {
           dir="ltr"
           data-slot="navigation-menu"
           data-viewport="true"
-          className="group/navigation-menu relative flex max-w-max flex-1 items-center justify-center min-w-full"
+          className="group/navigation-menu relative gap-4  flex max-w-max flex-1 items-center justify-center min-w-full"
         >
+          <button onClick={menuHandler} className="cursor-pointer">
+            {!menu && (
+              <div onClick={menuHandler}>
+                <CiMenuFries className="w-[24px] h-[24px] rotate-180 text-white" />
+              </div>
+            )}
+          </button>
           <div className="flex w-full items-center justify-between gap-12 py-4">
             <div>
-              <span>DockShell</span>
+              <h1 className="text-[28px]">DockShell</h1>
             </div>
             <div>
               <ul

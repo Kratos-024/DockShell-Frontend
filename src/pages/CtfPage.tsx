@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { NavBar } from "../components/NavBar";
 import { Footer } from "../components/Footer";
 import CtfMenu from "../components/CtfMenu";
+import { CtfBody } from "../components/CtfBody";
 
 export const CtfPage = ({
   menuHandler,
@@ -24,9 +25,10 @@ export const CtfPage = ({
         paddingRight: "0",
       }}
     >
-      <NavBar />
+      <NavBar menu={menu} menuHandler={menuHandler} />
       <div className="px-3">
         <CtfMenu menuHandler={menuHandler} menu={menu} />
+        <CtfBody />
         <Footer />
       </div>
     </motion.section>
