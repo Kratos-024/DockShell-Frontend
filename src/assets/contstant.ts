@@ -1,11 +1,5 @@
-export default interface LabInter {
-  imgSrc: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  header: string;
-  subHeader: string;
-  solved: number;
-  topic: string;
-}
+import type LabInter from "./types";
+
 export const labs: LabInter[] = [
   {
     imgSrc: "https://picsum.photos/400/200?random=1",

@@ -17,7 +17,7 @@ function App() {
         <Route element={<CtfsPage />} path="/ctf"></Route>
         <Route
           element={<CtfPage menuHandler={menuHandler} menu={menu} />}
-          path="/ctf/:ctfid/:ctf"
+          path="/ctf/:ctfLevel/:ctfName"
         ></Route>
         <Route element={<UserProfilePage />} path="/p/:username"></Route>
       </Routes>
