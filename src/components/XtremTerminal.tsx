@@ -115,8 +115,6 @@ export const WebTerminal = () => {
       terminal.write("Password: ");
       passwordMode.current = true;
       passwordBuffer.current = "";
-
-      // intercept password typing
       const handlePasswordInput = (char: string) => {
         if (char === "\r") {
           terminal.write("\r\n");
@@ -139,8 +137,6 @@ export const WebTerminal = () => {
           terminal.write("*");
         }
       };
-
-      // hook into onData temporarily
       terminal.onData((data) => {
         if (passwordMode.current) {
           handlePasswordInput(data);
@@ -163,7 +159,7 @@ export const WebTerminal = () => {
       if (command.startsWith("ssh")) {
         handleSSHLogin(command);
       } else if (socket.readyState === WebSocket.OPEN) {
-        socket.send(command + "\n"); // send normal commands to server
+        socket.send(command + "\n");
       } else {
         terminal.writeln("\x1B[1;31mError: Not connected to server\x1B[0m");
         terminal.write("$ ");
@@ -195,7 +191,6 @@ export const WebTerminal = () => {
         replaceCurrentLine("");
       }
     };
-
     terminal.onData((data) => {
       if (waitingForPrompt.current || passwordMode.current) return;
 
@@ -220,7 +215,10 @@ export const WebTerminal = () => {
   }, []);
 
   return (
-    <div className="w-full bg-[#1d1f21] rounded-lg overflow-hidden shadow-2xl font-sans">
+    <div
+      className="w-full bg-[#1d1f21] rounded-lg
+     overflow-hidden  shadow-2xl  font-sans"
+    >
       <div className="h-9 bg-gradient-to-b from-gray-200 to-gray-300 flex items-center px-4 border-b border-gray-400 relative">
         <div className="flex gap-2">
           <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -232,7 +230,10 @@ export const WebTerminal = () => {
         </div>
       </div>
 
-      <div ref={terminalRef} className="p-4 h-[480px] bg-[#1d1f21]" />
+      <div
+        ref={terminalRef}
+        className="px-4 py-9 custom-scrollbar bg-[#1d1f21] overflow-auto scrollbar-thin"
+      />
     </div>
   );
 };

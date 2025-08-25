@@ -3,6 +3,7 @@ import { HomePage } from "./pages/HomePage";
 import { CtfsPage } from "./pages/CtfsPage";
 import { CtfPage } from "./pages/CtfPage";
 import { useState } from "react";
+import { UserProfilePage } from "./pages/UserProfilePage";
 
 function App() {
   const [menu, setMenu] = useState<boolean>(true);
@@ -18,6 +19,7 @@ function App() {
           element={<CtfPage menuHandler={menuHandler} menu={menu} />}
           path="/ctf/:ctfid/:ctf"
         ></Route>
+        <Route element={<UserProfilePage />} path="/p/:username"></Route>
       </Routes>
     </BrowserRouter>
   );

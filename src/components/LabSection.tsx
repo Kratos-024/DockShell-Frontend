@@ -1,59 +1,4 @@
-const labs: LabInter[] = [
-  {
-    imgSrc: "https://picsum.photos/400/200?random=1",
-    difficulty: "Easy",
-    topic: "Web Exploitation",
-    header: "SQL Injection Basics",
-    subHeader:
-      "Learn how to exploit poorly sanitized SQL queries to gain unauthorized access.",
-    solved: 124,
-  },
-  {
-    imgSrc: "https://picsum.photos/400/200?random=2",
-    difficulty: "Medium",
-    topic: "Cryptography",
-    header: "Weak Hash Cracking",
-    subHeader:
-      "Understand MD5 weaknesses and practice brute-forcing simple hashes.",
-    solved: 98,
-  },
-  {
-    imgSrc: "https://picsum.photos/400/200?random=3",
-    difficulty: "Hard",
-    topic: "Reverse Engineering",
-    header: "CrackMe Challenge",
-    subHeader:
-      "Analyze binaries to bypass checks and retrieve the hidden flag.",
-    solved: 57,
-  },
-  {
-    imgSrc: "https://picsum.photos/400/200?random=4",
-    difficulty: "Easy",
-    topic: "Forensics",
-    header: "Hidden Data in Images",
-    subHeader:
-      "Investigate suspicious image files and extract embedded information.",
-    solved: 142,
-  },
-  {
-    imgSrc: "https://picsum.photos/400/200?random=5",
-    difficulty: "Medium",
-    topic: "Networking",
-    header: "Packet Sniffing 101",
-    subHeader:
-      "Capture and analyze network traffic to find sensitive data leaks.",
-    solved: 76,
-  },
-];
-
-interface LabInter {
-  imgSrc: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  header: string;
-  subHeader: string;
-  solved: number;
-  topic: string;
-}
+import type LabInter from "../assets/contstant";
 
 const LabCard = ({ lab }: { lab: LabInter }) => {
   return (
@@ -143,12 +88,18 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
   );
 };
 
-export const LabSection = () => {
+export const LabSection = ({
+  header,
+  labs,
+}: {
+  header: string;
+  labs: LabInter[];
+}) => {
   return (
-    <section className="w-full">
+    <section className="w-full pt-7">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] text-green-600 mb-6 md:mb-8">
-          Labs
+          {header}
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-3 md:gap-6">
           {labs.map((lab: LabInter, idx: number) => {
