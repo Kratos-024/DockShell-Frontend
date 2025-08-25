@@ -1,4 +1,5 @@
-import type LabInter from "../assets/contstant";
+import { Link } from "react-router-dom";
+import type LabInter from "../assets/types";
 
 const LabCard = ({ lab }: { lab: LabInter }) => {
   return (
@@ -19,7 +20,7 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
       >
         <div className="relative overflow-hidden rounded-t-lg">
           <img
-            alt={lab.header}
+            alt={lab.title}
             className="w-full h-32 sm:h-40 md:h-48 object-cover transition-transform duration-300 group-hover:scale-105"
             src={lab.imgSrc}
           />
@@ -30,9 +31,10 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
             >
               {lab.difficulty}
             </span>
+
             <span
               data-slot="badge"
-              className="inline-flex items-center justify-center rounded-md border px-1.5 sm:px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] transition-[color,box-shadow] overflow-hidden bg-gray-900/80 backdrop-blur-sm border-green-700/50 text-green-300 hidden sm:inline-flex"
+              className=" items-center justify-center rounded-md border px-1.5 sm:px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] transition-[color,box-shadow] overflow-hidden bg-gray-900/80 backdrop-blur-sm border-green-700/50 text-green-300 hidden sm:inline-flex"
             >
               {lab.topic}
             </span>
@@ -40,14 +42,13 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
         </div>
       </div>
 
-      {/* Card Content */}
       <div
         data-slot="card-content"
         className="p-3 sm:p-4 md:p-6 flex-1 flex flex-col"
       >
         <div className="space-y-2 md:space-y-3 flex-1">
           <h3 className="font-semibold text-sm sm:text-base md:text-lg text-gray-100 group-hover:text-green-400 transition-colors line-clamp-2">
-            {lab.header}
+            {lab.title}
           </h3>
           <p className="text-gray-400 text-xs sm:text-sm leading-relaxed line-clamp-2 md:line-clamp-3">
             {lab.subHeader}
@@ -102,9 +103,12 @@ export const LabSection = ({
           {header}
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-3 md:gap-6">
-          {labs.map((lab: LabInter, idx: number) => {
-            return <LabCard key={idx} lab={lab} />;
-          })}
+          <Link to={`/ctf/level0/frostling`}>
+            {" "}
+            {labs.map((lab: LabInter, idx: number) => {
+              return <LabCard key={idx} lab={lab} />;
+            })}
+          </Link>
         </div>
       </div>
     </section>

@@ -1,8 +1,8 @@
 import { useState } from "react";
-
 import { FaTrophy } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 export const CtfMenu = ({
   menuHandler,
@@ -12,9 +12,10 @@ export const CtfMenu = ({
   menuHandler: () => void;
 }) => {
   const [unlockedLevels] = useState(5);
-
+  const navigate = useNavigate();
   const handleLevelClick = (level: number) => {
-    alert(level);
+    navigate(`/ctf/level${level}/frostling`);
+    window.location.reload();
   };
 
   const menuVariants = {
@@ -30,12 +31,12 @@ export const CtfMenu = ({
     },
   };
 
-  const levelVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1 },
-  };
+  // const levelVariants = {
+  //   hidden: { opacity: 0, scale: 0.8 },
+  //   visible: { opacity: 1, scale: 1 },
+  // };
 
-  const levels = Array.from({ length: 40 }, (_, i) => i + 1);
+  const levels = Array.from({ length: 40 }, (_, i) => i);
 
   return (
     <>
@@ -58,7 +59,7 @@ export const CtfMenu = ({
             className="text-center font-semibold mb-6 sm:mb-8 md:mb-10
               text-xl sm:text-2xl md:text-[28px]"
           >
-            <a href="/">Bandit</a>
+            <a href="/">Frostling</a>
           </motion.h2>
 
           <div
@@ -109,10 +110,10 @@ export const CtfMenu = ({
                   return (
                     <motion.button
                       key={level}
-                      variants={levelVariants}
-                      onClick={() => handleLevelClick(level)}
+                      onClick={() => {
+                        handleLevelClick(level);
+                      }}
                       whileHover={isUnlocked ? { scale: 1.1 } : {}}
-                      whileTap={isUnlocked ? { scale: 0.9 } : {}}
                       className={`
                         relative p-2 rounded-lg cursor-pointer
                          text-xs font-bold transition-all

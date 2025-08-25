@@ -14,7 +14,7 @@ type CTFGroup = {
 };
 
 export const CTFProgress = () => {
-  const [expandedCTF, setExpandedCTF] = useState<string | null>("bandit");
+  const [expandedCTF, setExpandedCTF] = useState<string | null>("Frostling");
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
   // Generate levels function to avoid repetition
@@ -32,12 +32,12 @@ export const CTFProgress = () => {
   };
 
   const ctfGroups: Record<string, CTFGroup> = {
-    bandit: {
-      name: "OverTheWire: Bandit",
+    Frostling: {
+      name: "OverTheWire: Frostling",
       totalLevels: 34,
       completedLevels: 15,
       levels: generateLevels(34, 15, [
-        "bandit0",
+        "Frostling0",
         "NH2SXQwcBdpmTEzi3bvBHMM9H66vVXjL",
         "rRGizSaX8Mk1RTb1CNQoXTcYZWU6lgzi",
         "aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG",

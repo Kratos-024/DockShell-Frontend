@@ -3,12 +3,12 @@ import type { LevelResponse } from "../assets/types";
 export class LevelService {
   private baseUrl: string;
 
-  constructor(baseUrl: string = "http://localhost:8000") {
+  constructor(baseUrl: string = "http://localhost:8080") {
     this.baseUrl = baseUrl;
   }
 
   private getHeaders(): HeadersInit {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken") || "cd";
     return {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -19,17 +19,17 @@ export class LevelService {
     ctfName: string,
     ctfLevel: string
   ): Promise<LevelResponse | { error: string }> {
-    const uniqueId = `${ctfName}${ctfLevel}`;
-    const url = `${this.baseUrl}/getEachLevel/getctfLevel/${uniqueId}`;
+    const uniqueId = `${ctfName}-${ctfLevel}`;
+    const url = `${this.baseUrl}/api/v1/ctf/getctfLevel/${uniqueId}`;
 
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken") || "cd";
     if (!token) {
       return { error: "No authentication token found. Please login." };
     }
 
     try {
       const response = await fetch(url, {
-        method: "POST",
+        method: "GET",
         headers: this.getHeaders(),
       });
 

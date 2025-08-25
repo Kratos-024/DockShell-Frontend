@@ -6,7 +6,20 @@ import { CtfBody } from "../components/CtfBody";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import LevelServiceInstance from "../services/ctf.service";
-
+import type { LevelData } from "../assets/types";
+const skeletonLevelData: LevelData = {
+  uniqueId: "loading...",
+  goal: "Loading level goal...",
+  description: "Loading level description...",
+  commands: ["Loading..."],
+  hints: ["Loading hints..."],
+  links: ["#"],
+  expectedOutput: "Loading expected output...",
+  difficulty: "beginner",
+  category: "fileexploration",
+  estimatedTime: 0,
+  createdAt: new Date(),
+};
 export const CtfPage = ({
   menuHandler,
   menu,
@@ -14,7 +27,8 @@ export const CtfPage = ({
   menu: boolean;
   menuHandler: () => void;
 }) => {
-  const [levelDetails, setLevelDetails] = useState("");
+  const [levelDetails, setLevelDetails] =
+    useState<LevelData>(skeletonLevelData);
   const { ctfLevel, ctfName } = useParams();
   useEffect(() => {
     const levelGetterHandler = async () => {
@@ -24,7 +38,9 @@ export const CtfPage = ({
             ctfName,
             ctfLevel
           );
-          setLevelDetails(response.data);
+          if ("statusCode" in response && response.statusCode === 200) {
+            setLevelDetails(response.data);
+          }
         }
       } catch (error) {
         console.log("Error has been occured in levelGetterHandler", error);
@@ -49,7 +65,7 @@ export const CtfPage = ({
       <NavBar menu={menu} menuHandler={menuHandler} />
       <div className="px-3">
         <CtfMenu menuHandler={menuHandler} menu={menu} />
-        <CtfBody levelDetails={levelDetails} />
+        <CtfBody levelData={levelDetails} nextLevelNumber={+{ ctfLevel } + 1} />
         <Footer />
       </div>
     </motion.section>
