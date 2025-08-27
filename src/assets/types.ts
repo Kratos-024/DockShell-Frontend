@@ -2,6 +2,13 @@ export interface LevelResponse {
   statusCode: number;
   data: LevelData;
 }
+export interface ValidateSessionResponse {
+  statusCode: 200;
+  message: string;
+  data: {
+    user: UserData;
+  };
+}
 export default interface LabInter {
   title: string;
   imgSrc: string;

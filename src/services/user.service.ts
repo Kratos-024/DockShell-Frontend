@@ -5,6 +5,7 @@ import type {
   ServiceError,
   LoginPayload,
   UserLoginResponse,
+  ,
 } from "../assets/types";
 
 export class UserServices {
@@ -13,7 +14,13 @@ export class UserServices {
   constructor(baseUrl: string = "http://localhost:8080") {
     this.baseUrl = baseUrl;
   }
-
+  private getAuthHeaders(): HeadersInit {
+    const token = localStorage.getItem("accessToken");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  }
   private getPublicHeaders(): HeadersInit {
     return {
       "Content-Type": "application/json",
@@ -55,7 +62,37 @@ export class UserServices {
       return { error: "An unknown error occurred" };
     }
   }
+  public async validateSession(): Promise<
+    ValidateSessionResponse | ServiceError
+  > {
+    const url = `${this.baseUrl}/api/v1/user/validate`;
 
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem("accessToken");
+        }
+        return {
+          error:
+            data.error || `Session validation failed: ${response.statusText}`,
+        };
+      }
+
+      return data as ValidateSessionResponse;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return { error: `Network or fetch error: ${error.message}` };
+      }
+      return { error: "An unknown error occurred during session validation" };
+    }
+  }
   public async loginUser(
     credentials: LoginPayload
   ): Promise<UserLoginResponse | ServiceError> {

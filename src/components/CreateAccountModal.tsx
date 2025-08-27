@@ -77,28 +77,24 @@ export const CreateAccountModal = ({
       className="fixed  inset-0 z-50 flex items-center  
     justify-center"
     >
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 
         backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div
         className="relative w-full max-w-md mx-4 
      bg-[#232e31] rounded-2xl border border-slate-700/50
          shadow-2xl"
       >
-        {/* Close Button */}
+        {" "}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200"
         >
           <X className="w-5 h-5" />
         </button>
-
-        {/* Header */}
         {createAccount && (
           <div className="p-6 pb-2">
             <h2 className="text-2xl font-bold text-center text-white mb-2">
@@ -119,11 +115,9 @@ export const CreateAccountModal = ({
             </p>
           </div>
         )}
-        {/* Form */}
         <div className="px-7  pb-6">
           {createAccount && (
             <div className="space-y-4">
-              {/* Name Fields */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-1">
@@ -155,7 +149,6 @@ export const CreateAccountModal = ({
                   />
                 </div>
               </div>
-              {/* Username Field */}
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">
                   Username
@@ -173,7 +166,6 @@ export const CreateAccountModal = ({
                   />
                 </div>
               </div>
-              {/* Email Field */}
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">
                   Email Address
@@ -191,8 +183,6 @@ export const CreateAccountModal = ({
                   />
                 </div>
               </div>
-
-              {/* Password Field */}
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">
                   Password
@@ -222,7 +212,6 @@ export const CreateAccountModal = ({
                 </div>
               </div>
 
-              {/* Confirm Password Field */}
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">
                   Confirm Password
@@ -255,7 +244,6 @@ export const CreateAccountModal = ({
           )}
           {!createAccount && (
             <div className="space-y-4">
-              {/* Username Field */}
               <div>
                 <label
                   className="block text-sm font-medium
@@ -311,7 +299,6 @@ export const CreateAccountModal = ({
               </div>
             </div>
           )}
-          {/* Submit Button */}
           <button
             onClick={handleSubmit}
             className="w-full mt-6 px-4 py-3
@@ -325,7 +312,6 @@ export const CreateAccountModal = ({
             <span className="px-4 text-slate-300 text-sm">or</span>
             <div className="flex-1 h-px bg-slate-500"></div>
           </div>
-          {/* Social Login Buttons */}
           <div className="space-y-4">
             <button className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-transparent border border-slate-500 rounded-2xl text-slate-200 hover:bg-slate-600/30 transition-all duration-200">
               <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
@@ -334,7 +320,6 @@ export const CreateAccountModal = ({
               <span>Sign up with Google</span>
             </button>
           </div>
-          {/* Footer */}
           {createAccount && (
             <p className="text-center text-sm text-slate-400 mt-4">
               Already have an account?{" "}
