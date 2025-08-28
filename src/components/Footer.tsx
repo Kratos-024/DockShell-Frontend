@@ -1,14 +1,19 @@
-import React from "react";
+import React from 'react';
 
 export const Footer = () => {
   return (
     <footer>
-      <div
-        className="theme-zinc w-full"
-        style={{ "--radius": "0.5rem" } as React.CSSProperties}
-      >
-        <div className="preview flex min-h-[350px] w-full justify-center p-2 sm:p-10 items-center">
-          <div className="border-t border-neutral-100 dark:border-white/[0.1] px-8 py-20 bg-white dark:bg-neutral-950 w-full relative overflow-hidden">
+      <div className="t w-full" style={{ '--radius': '0.5rem' } as React.CSSProperties}>
+        <div
+          className="preview flex  w-full
+         justify-center pt-[96px]  items-center"
+        >
+          <div
+            className="border-t 
+            px-8 py-20 
+            dark:bg-[#35353537] w-full relative
+             overflow-hidden"
+          >
             <div className="max-w-7xl mx-auto text-sm text-neutral-500 justify-between items-start md:px-8">
               <div className="flex flex-col items-center justify-center w-full relative">
                 <div className="mr-0 md:mr-4 md:flex mb-4">
@@ -24,68 +29,45 @@ export const Footer = () => {
                       decoding="async"
                       className="object-contain"
                       src="https://assets.aceternity.com/logo-dark.png"
-                      style={{ color: "transparent" }}
+                      style={{ color: 'transparent' }}
                     />
-                    <span className="font-medium text-black dark:text-white">
-                      DevStudio
-                    </span>
+                    <span className="font-medium text-black dark:text-white">DockShell</span>
                   </a>
                 </div>
 
                 <ul className="transition-colors flex sm:flex-row flex-col hover:text-neutral-800 text-neutral-600 dark:text-neutral-300 list-none gap-4">
                   <li className="list-none">
-                    <a
-                      className="transition-colors hover:text-neutral-800"
-                      href="/products"
-                    >
+                    <a className="transition-colors hover:text-neutral-800" href="/products">
                       Products
                     </a>
                   </li>
                   <li className="list-none">
-                    <a
-                      className="transition-colors hover:text-neutral-800"
-                      href="/studio"
-                    >
+                    <a className="transition-colors hover:text-neutral-800" href="/studio">
                       Studio
                     </a>
                   </li>
                   <li className="list-none">
-                    <a
-                      className="transition-colors hover:text-neutral-800"
-                      href="/clients"
-                    >
+                    <a className="transition-colors hover:text-neutral-800" href="/clients">
                       Clients
                     </a>
                   </li>
                   <li className="list-none">
-                    <a
-                      className="transition-colors hover:text-neutral-800"
-                      href="/pricing"
-                    >
+                    <a className="transition-colors hover:text-neutral-800" href="/pricing">
                       Pricing
                     </a>
                   </li>
                   <li className="list-none">
-                    <a
-                      className="transition-colors hover:text-neutral-800"
-                      href="/blog"
-                    >
+                    <a className="transition-colors hover:text-neutral-800" href="/blog">
                       Blog
                     </a>
                   </li>
                   <li className="list-none">
-                    <a
-                      className="transition-colors hover:text-neutral-800"
-                      href="/privacy"
-                    >
+                    <a className="transition-colors hover:text-neutral-800" href="/privacy">
                       Privacy
                     </a>
                   </li>
                   <li className="list-none">
-                    <a
-                      className="transition-colors hover:text-neutral-800"
-                      href="/terms"
-                    >
+                    <a className="transition-colors hover:text-neutral-800" href="/terms">
                       Terms
                     </a>
                   </li>
@@ -95,25 +77,23 @@ export const Footer = () => {
                   className="w-[calc(100%+var(--offset))] h-[var(--height)] bg-[linear-gradient(to_right,var(--color),var(--color)_50%,transparent_0,transparent)] dark:bg-[linear-gradient(to_right,var(--color-dark),var(--color-dark)_50%,transparent_0,transparent)] max-w-7xl mx-auto mt-8"
                   style={
                     {
-                      "--background": "#ffffff",
-                      "--color": "rgba(0, 0, 0, 0.2)",
-                      "--height": "1px",
-                      "--width": "5px",
-                      "--fade-stop": "90%",
-                      "--offset": "200px",
-                      "--color-dark": "rgba(255, 255, 255, 0.2)",
-                      backgroundSize: "var(--width) var(--height)",
-                      mask: "linear-gradient(to_left,var(--background)_var(--fade-stop),transparent), linear-gradient(to_right,var(--background)_var(--fade-stop),transparent), linear-gradient(black,black)",
-                      maskComposite: "exclude",
+                      '--background': '#ffffff',
+                      '--color': 'rgba(0, 0, 0, 0.2)',
+                      '--height': '1px',
+                      '--width': '5px',
+                      '--fade-stop': '90%',
+                      '--offset': '200px',
+                      '--color-dark': 'rgba(255, 255, 255, 0.2)',
+                      backgroundSize: 'var(--width) var(--height)',
+                      mask: 'linear-gradient(to_left,var(--background)_var(--fade-stop),transparent), linear-gradient(to_right,var(--background)_var(--fade-stop),transparent), linear-gradient(black,black)',
+                      maskComposite: 'exclude',
                     } as React.CSSProperties
                   }
                 ></div>
               </div>
 
               <div className="flex sm:flex-row flex-col justify-between mt-8 items-center w-full">
-                <p className="text-neutral-500 dark:text-neutral-400 mb-8 sm:mb-0">
-                  © DevStudios LLABC
-                </p>
+                <p className="text-neutral-500 dark:text-neutral-400 mb-8 sm:mb-0">© DockShell</p>
 
                 <div className="flex gap-4">
                   <a href="#" aria-label="Twitter">

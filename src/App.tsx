@@ -9,15 +9,27 @@ import { FullscreenLayout } from "./FullscreenLayout";
 
 function App() {
   const [menu, setMenu] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const menuHandler = () => {
     setMenu(!menu);
   };
-
+  const handleLoginClick = () => {
+    setIsModalOpen(!isModalOpen);
+  };
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/"
+            element={
+              <HomePage
+                handleLoginClick={handleLoginClick}
+                isModalOpen={isModalOpen}
+              />
+            }
+          />
           <Route path="/ctf" element={<CtfsPage />} />
           <Route path="/p/:username" element={<UserProfilePage />} />
         </Route>

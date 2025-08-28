@@ -1,8 +1,50 @@
 import { Shield, Lock, Globe, AlertTriangle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import UserServicesInstance from "../services/user.service";
+type AuthState = "loading" | "authenticated" | "unauthenticated";
 
-export function HeroSection() {
+export function HeroSection({
+  handleLoginClick,
+}: {
+  handleLoginClick: () => void | undefined;
+}) {
+  const [authState, setAuthState] = useState<AuthState>("loading");
+
+  useEffect(() => {
+    const checkUserSession = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        setAuthState("unauthenticated");
+        return;
+      }
+      const response = await UserServicesInstance.validateSession();
+      if ("data" in response && response.data.user) {
+        setAuthState("authenticated");
+      } else {
+        setAuthState("unauthenticated");
+      }
+    };
+    checkUserSession();
+  }, []);
+  const navigate = useNavigate();
+  const handlerStartNow = async () => {
+    try {
+      if (authState === "authenticated") {
+        navigate("/ctf");
+      } else {
+        handleLoginClick();
+      }
+    } catch (error) {
+      console.log("Error has been occured", error);
+    }
+  };
+
   return (
-    <section className="relative px-6 py-20 text-center overflow-hidden z-10">
+    <section
+      className="relative px-6 py-20 text-center
+     overflow-hidden z-10"
+    >
       <div className="absolute inset-0 opacity-10 -z-10">
         <Shield className="absolute top-20 left-10 h-12 w-12 text-primary animate-pulse" />
         <Lock className="absolute top-32 right-16 h-8 w-8 text-accent animate-pulse delay-1000" />
@@ -10,23 +52,44 @@ export function HeroSection() {
         <AlertTriangle className="absolute bottom-20 right-12 h-6 w-6 text-accent animate-pulse delay-1500" />
       </div>
 
-      <div className="container mx-auto px-4 py-20 relative z-20">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8">
+      <div
+        className="container mx-auto px-4 py-20 relative 
+      z-20"
+      >
+        <div
+          className="grid lg:grid-cols-2 gap-16
+         items-center"
+        >
+          <div className="space-y-8 lg:mb-[96px]">
             <div className="space-y-6">
               <h1
                 className="text-5xl lg:text-7xl font-mono
                font-bold  text-[#9fef00]
                leading-tight"
               >
-                text-primary Hack. Learn.
+                Hack. Learn.
                 <br />
                 <span className="text-secondary ">Conquer.</span>
               </h1>
-              <p className="text-xl font-mono text-muted-foreground max-w-lg leading-relaxed">
+              <p
+                className="text-xl font-mono 
+              text-muted-foreground  leading-relaxed"
+              >
                 Step into a gamified cybersecurity arena. Solve challenges,
                 capture the flag, and sharpen your skills.
               </p>
+              <button
+                onClick={handlerStartNow}
+                data-slot="button"
+                className="inline-flex items-center 
+                border-[1px] justify-center 
+              gap-2 whitespace-nowrap rounded-md text-sm 
+        bg-[#bbff34]  text-black      font-medium transition-all 
+              hover:text-accent-foreground 
+               h-9 px-6 py-5 cursor-pointer"
+              >
+                Start Now
+              </button>
             </div>
           </div>
 
@@ -71,8 +134,6 @@ export function HeroSection() {
                   </div>
                 </div>
               </div>
-
-              {/* Glowing digital flag */}
               <div className="absolute top-4 right-4 animate-bounce">
                 <div className="relative">
                   <div className="w-12 h-8 bg-gradient-to-r from-primary to-secondary glow-green rounded-sm flex items-center justify-center">
@@ -84,7 +145,6 @@ export function HeroSection() {
                 </div>
               </div>
 
-              {/* Floating code particles */}
               <div className="absolute top-8 left-8 text-primary text-glow-green font-mono text-xs animate-pulse">
                 {"01101000"}
               </div>
@@ -94,8 +154,6 @@ export function HeroSection() {
               <div className="absolute top-16 right-16 text-primary text-glow-green font-mono text-xs animate-pulse delay-700">
                 {"#!/bin/sh"}
               </div>
-
-              {/* Success message */}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-card border border-primary glow-green rounded px-3 py-1">
                 <div className="font-mono text-xs text-primary animate-pulse">
                   {"[FLAG_CAPTURED]"}

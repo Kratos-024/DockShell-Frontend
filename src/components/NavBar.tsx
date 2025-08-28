@@ -10,14 +10,17 @@ type AuthState = "loading" | "authenticated" | "unauthenticated";
 export const NavBar = ({
   menuHandler,
   menu = true,
+  isModalOpen,
+  handleLoginClick,
 }: {
-  menu: boolean;
-  menuHandler: () => void;
+  menu?: boolean | undefined;
+  isModalOpen: boolean;
+  menuHandler?: () => void;
+  handleLoginClick: () => void;
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [authState, setAuthState] = useState<AuthState>("loading");
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // State for the user menu
-  const [isLoading, setIsLoading] = useState(false); // For the sign-out button loading state
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     const checkUserSession = async () => {
@@ -36,12 +39,12 @@ export const NavBar = ({
     checkUserSession();
   }, []);
 
-  const handleLoginClick = () => {
-    setIsModalOpen(true);
-  };
+  // const handleLoginClick = () => {
+  //   setIsModalOpen(!isModalOpen);
+  // };
 
   const closeModal = () => {
-    setIsModalOpen(false);
+    handleLoginClick();
     const token = localStorage.getItem("accessToken");
     if (token) {
       setAuthState("authenticated");
@@ -74,21 +77,27 @@ export const NavBar = ({
           <div className="relative">
             <FaUserCircle
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="h-9 w-9 cursor-pointer text-white transition-opacity hover:opacity-80"
+              className="h-[38px] w-[38px] cursor-pointer
+               text-white transition-opacity hover:opacity-80"
             />
             {isUserMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl bg-gray-800 p-2 shadow-lg ring-1 ring-white/10 z-50">
+              <div
+                className="absolute right-0 mt-2 w-56
+               rounded-xl  bg-[#232e31] p-2 shadow-lg ring-1
+                ring-white/10 z-50"
+              >
                 <div className="space-y-2 sm:space-y-3 md:space-y-2">
-                  {/* My Profile button */}
                   <button
                     onClick={handleMyProfile}
-                    className="w-full flex items-center justify-center gap-3 px-4 sm:px-6 md:px-4 lg:px-6 py-3 sm:py-4 md:py-3 lg:py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold text-base sm:text-lg md:text-sm lg:text-base rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-h-[44px] sm:min-h-[48px] md:min-h-[44px]"
+                    className="w-full flex items-center 
+                    justify-center gap-3 px-4 sm:px-6 md:px-4 
+                    lg:px-6 py-3 sm:py-4 md:py-3 lg:py-4 
+                     bg-[#bbff34] text-black 
+                      font-bold text-base sm:text-lg md:text-sm lg:text-base rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-h-[44px] sm:min-h-[48px] md:min-h-[44px]"
                   >
-                    <FaUser className="w-4 h-4 sm:w-5 sm:h-5 md:w-4 md:h-4" />
+                    <FaUser className="w-4 h-4 sm:w-5 sm:h-5  text-black md:w-4 md:h-4" />
                     My Profile
                   </button>
-
-                  {/* Sign Out button */}
                   <button
                     onClick={handleLogout}
                     disabled={isLoading}
@@ -118,31 +127,13 @@ export const NavBar = ({
             <button
               onClick={handleLoginClick}
               data-slot="button"
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 px-4 py-2"
+              className="inline-flex items-center border-[1px] justify-center 
+              gap-2 whitespace-nowrap rounded-md text-sm 
+              font-medium transition-all 
+              hover:text-accent-foreground 
+               h-9 px-4 py-2"
             >
               Login
-            </button>
-            <button
-              onClick={handleLoginClick}
-              data-slot="button"
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2"
-            >
-              Start now
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-chevron-right size-4"
-                aria-hidden="true"
-              >
-                <path d="m9 18 6-6-6-6"></path>
-              </svg>
             </button>
           </>
         );
@@ -151,55 +142,45 @@ export const NavBar = ({
 
   return (
     <>
-      <section className="bg-background inset-x-0 top-0 z-20">
-        <div className="container">
-          <nav
-            aria-label="Main"
-            data-orientation="horizontal"
-            dir="ltr"
-            data-slot="navigation-menu"
-            data-viewport="true"
-            className="group/navigation-menu relative gap-4 flex max-w-max flex-1 items-center justify-center min-w-full"
-          >
-            <button onClick={menuHandler} className="cursor-pointer">
-              {!menu && (
-                <div onClick={menuHandler}>
-                  <CiMenuFries className="w-[24px] h-[24px] rotate-180 text-white" />
-                </div>
-              )}
-            </button>
-            <div className="flex w-full items-center justify-between gap-12 py-4">
-              <h1 className="text-[28px]">
-                <a href="/">DockShell</a>
-              </h1>
-
-              <div>
-                <ul
-                  data-orientation="horizontal"
-                  data-slot="navigation-menu-list"
-                  className="group flex-1 list-none items-center justify-center gap-1 hidden lg:flex"
-                  dir="ltr"
-                >
-                  {/* ... Your other navigation list items ... */}
-                </ul>
+      <section className="bg-black/20 inset-x-0 top-0 z-20">
+        <nav
+          aria-label="Main"
+          data-orientation="horizontal"
+          dir="ltr"
+          data-slot="navigation-menu"
+          data-viewport="true"
+          className="group/navigation-menu max-w-[1480px] px] mx-auto relative gap-4 
+          flex max-xl:px-7 min-w-min  flex-1 items-center justify-center
+          "
+        >
+          <button onClick={menuHandler} className="cursor-pointer">
+            {!menu && (
+              <div onClick={menuHandler}>
+                <CiMenuFries className="w-[24px] h-[24px] rotate-180 text-white" />
               </div>
+            )}
+          </button>
+          <div className="flex w-full items-center justify-between gap-12 py-4">
+            <h1 className="text-[28px]">
+              <a href="/">DockShell</a>
+            </h1>
 
-              <div className="hidden items-center gap-2 lg:flex">
-                <AuthSection />
-              </div>
-
-              <div className="flex items-center gap-4 lg:hidden">
-                <button
-                  data-slot="button"
-                  className="inline-flex items-center justify-center size-9"
-                  aria-label="Main Menu"
-                >
-                  <FaUserCircle className="size-5" />
-                </button>
-              </div>
+            <div>
+              <ul
+                data-orientation="horizontal"
+                data-slot="navigation-menu-list"
+                className="group flex-1 list-none items-center justify-center gap-1 hidden lg:flex"
+                dir="ltr"
+              >
+                {/* ... Your other navigation list items ... */}
+              </ul>
             </div>
-          </nav>
-        </div>
+
+            <div className=" items-center gap-2 flex">
+              <AuthSection />
+            </div>
+          </div>
+        </nav>
       </section>
 
       <CreateAccountModal isOpen={isModalOpen} onClose={closeModal} />

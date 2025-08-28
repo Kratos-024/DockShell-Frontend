@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import type LabInter from "../assets/types";
+import { Link } from 'react-router-dom';
+import type LabInter from '../assets/types';
 
 const LabCard = ({ lab }: { lab: LabInter }) => {
   return (
@@ -42,10 +42,7 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
         </div>
       </div>
 
-      <div
-        data-slot="card-content"
-        className="p-3 sm:p-4 md:p-6 flex-1 flex flex-col"
-      >
+      <div data-slot="card-content" className="p-3 sm:p-4 md:p-6 flex-1 flex flex-col">
         <div className="space-y-2 md:space-y-3 flex-1">
           <h3 className="font-semibold text-sm sm:text-base md:text-lg text-gray-100 group-hover:text-green-400 transition-colors line-clamp-2">
             {lab.title}
@@ -74,13 +71,9 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
               </svg>
-              <span className="text-xs sm:text-sm font-medium">
-                {lab.solved} solved
-              </span>
+              <span className="text-xs sm:text-sm font-medium">{lab.solved} solved</span>
             </div>
-            <div className="text-xs text-green-400 hidden sm:block">
-              Click to explore →
-            </div>
+            <div className="text-xs text-green-400 hidden sm:block">Click to explore →</div>
             <div className="text-xs text-green-400 block sm:hidden">→</div>
           </div>
         </div>
@@ -89,22 +82,16 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
   );
 };
 
-export const LabSection = ({
-  header,
-  labs,
-}: {
-  header: string;
-  labs: LabInter[];
-}) => {
+export const LabSection = ({ header, labs }: { header: string; labs: LabInter[] }) => {
   return (
-    <section className="w-full pt-7">
+    <section className="w-full mt-[126px]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] text-green-600 mb-6 md:mb-8">
           {header}
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-3 md:gap-6">
           <Link to={`/ctf/level0/frostling`}>
-            {" "}
+            {' '}
             {labs.map((lab: LabInter, idx: number) => {
               return <LabCard key={idx} lab={lab} />;
             })}

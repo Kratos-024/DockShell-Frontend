@@ -91,21 +91,21 @@ const TerminalTypewriter = () => {
       setDisplayedText("");
       setCurrentIndex(0);
       setTerminalContent(terminalContents[randomIndex]);
-    }, 15000);
+    }, 12000);
 
     return () => clearInterval(resetInterval);
   }, []);
 
   return (
-    <div className="flex items-center justify-center p-4 h">
-      <div className="rounded-lg shadow-2xl w-[520px] max-w-4xl">
+    <div className="flex  items-center  justify-center p-4 ">
+      <div className="rounded-lg shadow-2xl w-full max-w-4xl">
         <div className="bg-gray-700 rounded-t-lg px-4 py-2 flex items-center space-x-2">
           <div className="w-3 h-3 bg-red-500 rounded-full"></div>
           <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-        </div>
-
-        <div className="bg-gray-900 rounded-b-lg p-6 h-[340px] font-mono text-sm overflow-hidden">
+        </div>{" "}
+        <div className="bg-gray-900 rounded-b-lg p-6 h-96 font-mono text-sm overflow-hidden">
+          {" "}
           <div className="text-green-400 whitespace-pre-wrap">
             {displayedText.split("\n").map((line, index) => (
               <div key={index} className="leading-6">
