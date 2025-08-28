@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "@xterm/xterm/css/xterm.css";
 import { WebTerminal } from "./XtremTerminal";
+import LevelServiceInstance from "../services/ctf.service";
+import { useParams } from "react-router-dom";
 
 type Difficulty = "beginner" | "intermediate" | "advanced" | "expert";
 type Category =
@@ -41,6 +43,7 @@ interface CtfBodyProps {
 
 export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
   const [flagInput, setFlagInput] = useState("");
+  const { ctfName } = useParams<string>();
   const [submissionResult, setSubmissionResult] = useState<{
     type: "success" | "error" | null;
     message: string;
@@ -52,7 +55,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
   const username = `level${levelNumber}`;
   const password = `level${levelNumber}`;
 
-  const handleFlagSubmit = () => {
+  const handleFlagSubmit = async () => {
     if (!flagInput.trim()) {
       setSubmissionResult({
         type: "error",
@@ -60,7 +63,13 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
       });
       return;
     }
-
+    console.log(levelNumber);
+    const response = await LevelServiceInstance.saveCtfLevel(
+      ctfName,
+      +levelNumber,
+      flagInput.trim()
+    );
+    console.log(response);
     // if (flagInput.trim() === expectedFlag) {
     //   setSubmissionResult({
     //     type: "success",

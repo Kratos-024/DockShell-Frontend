@@ -34,33 +34,57 @@ export const CreateAccountModal = ({
     }));
   };
   const handleSubmit = async () => {
-    if (formData.password !== formData.confirmPassword) {
+    if (createAccount && formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match!");
       return;
     }
 
-    if (!formData.username || !formData.email || !formData.password) {
+    if (
+      !formData.username ||
+      !formData.password ||
+      (createAccount && !formData.email)
+    ) {
       toast.error("Please fill out all required fields.");
       return;
     }
 
     try {
-      const response = await UserServicesInstance.createAccount(formData);
-      if ("data" in response && response.data) {
-        toast.success(response.message || "Account created successfully!");
+      if (createAccount) {
+        const response = await UserServicesInstance.createAccount(formData);
+        if ("data" in response && response.data) {
+          toast.success(response.message || "Account created successfully!");
 
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          password: "",
-          username: "",
-          confirmPassword: "",
-        });
+          setFormData({
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            username: "",
+            confirmPassword: "",
+          });
 
-        onClose();
-      } else if ("error" in response) {
-        toast.error(response.error || "An unknown API error occurred.");
+          onClose();
+        } else if ("error" in response) {
+          toast.error(response.error || "An unknown API error occurred.");
+        }
+      } else {
+        const response = await UserServicesInstance.loginUser(formData);
+        if ("data" in response && response.data) {
+          toast.success(response.message || "Login successfully!");
+
+          setFormData({
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            username: "",
+            confirmPassword: "",
+          });
+
+          onClose();
+        } else if ("error" in response) {
+          toast.error(response.error || "An unknown API error occurred.");
+        }
       }
     } catch (error) {
       console.error("Submission failed:", error);
@@ -304,9 +328,8 @@ export const CreateAccountModal = ({
             className="w-full mt-6 px-4 py-3
     bg-[#bbff34]          text-black font-semibold rounded-lg hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 transform hover:scale-[1.02] transition-all duration-200"
           >
-            Create Account
+            {createAccount ? " Create Account" : "Sign In"}
           </button>
-          {/* Divider */}
           <div className="flex items-center my-8">
             <div className="flex-1 h-px bg-slate-500"></div>
             <span className="px-4 text-slate-300 text-sm">or</span>

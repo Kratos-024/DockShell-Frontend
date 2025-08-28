@@ -34,7 +34,7 @@ export const CtfPage = ({
     const levelGetterHandler = async () => {
       try {
         if (ctfLevel && ctfName) {
-          const response = await LevelServiceInstance.getLevel(
+          const response = await LevelServiceInstance.getCtfLevel(
             ctfName,
             ctfLevel
           );

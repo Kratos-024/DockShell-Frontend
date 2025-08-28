@@ -98,3 +98,16 @@ export interface LoginPayload {
   username: string; // Can be username or email
   password: string;
 }
+export interface levelPorgressResponse {
+  id: string;
+  ctfName: string;
+  username: string;
+  ctfClaimeds: [
+    {
+      ctfProgressId: string;
+      id: string;
+      levelNo: number;
+      password: string;
+    }
+  ];
+}

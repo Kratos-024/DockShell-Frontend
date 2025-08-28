@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { CiMenuFries } from "react-icons/ci";
-import { FaUserCircle } from "react-icons/fa"; // User icon for logged-in state
+import { FaUserCircle, FaUser, FaSignOutAlt } from "react-icons/fa"; // Import new icons
 import { CreateAccountModal } from "./CreateAccountModal";
 import UserServicesInstance from "../services/user.service";
+import { useNavigate } from "react-router-dom";
 
 type AuthState = "loading" | "authenticated" | "unauthenticated";
 
@@ -15,6 +16,9 @@ export const NavBar = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authState, setAuthState] = useState<AuthState>("loading");
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // State for the user menu
+  const [isLoading, setIsLoading] = useState(false); // For the sign-out button loading state
+  const navigate = useNavigate();
   useEffect(() => {
     const checkUserSession = async () => {
       const token = localStorage.getItem("accessToken");
@@ -22,16 +26,13 @@ export const NavBar = ({
         setAuthState("unauthenticated");
         return;
       }
-
       const response = await UserServicesInstance.validateSession();
-
       if ("data" in response && response.data.user) {
         setAuthState("authenticated");
       } else {
         setAuthState("unauthenticated");
       }
     };
-
     checkUserSession();
   }, []);
 
@@ -46,6 +47,21 @@ export const NavBar = ({
       setAuthState("authenticated");
     }
   };
+
+  const handleLogout = async () => {
+    setIsLoading(true);
+    localStorage.removeItem("accessToken");
+    setAuthState("unauthenticated");
+    setIsUserMenuOpen(false);
+    setIsLoading(false);
+  };
+
+  const handleMyProfile = () => {
+    navigate("/p/profile");
+    console.log("Navigating to profile...");
+    setIsUserMenuOpen(false);
+  };
+
   const AuthSection = () => {
     switch (authState) {
       case "loading":
@@ -55,7 +71,44 @@ export const NavBar = ({
 
       case "authenticated":
         return (
-          <FaUserCircle className="h-9 w-9 cursor-pointer text-white transition-opacity hover:opacity-80" />
+          <div className="relative">
+            <FaUserCircle
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              className="h-9 w-9 cursor-pointer text-white transition-opacity hover:opacity-80"
+            />
+            {isUserMenuOpen && (
+              <div className="absolute right-0 mt-2 w-56 rounded-xl bg-gray-800 p-2 shadow-lg ring-1 ring-white/10 z-50">
+                <div className="space-y-2 sm:space-y-3 md:space-y-2">
+                  {/* My Profile button */}
+                  <button
+                    onClick={handleMyProfile}
+                    className="w-full flex items-center justify-center gap-3 px-4 sm:px-6 md:px-4 lg:px-6 py-3 sm:py-4 md:py-3 lg:py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold text-base sm:text-lg md:text-sm lg:text-base rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-h-[44px] sm:min-h-[48px] md:min-h-[44px]"
+                  >
+                    <FaUser className="w-4 h-4 sm:w-5 sm:h-5 md:w-4 md:h-4" />
+                    My Profile
+                  </button>
+
+                  {/* Sign Out button */}
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoading}
+                    className={`w-full flex items-center justify-center gap-3 px-4 sm:px-6 md:px-4 lg:px-6 py-3 sm:py-4 md:py-3 lg:py-4 text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-lg sm:rounded-xl md:rounded-lg transition-all duration-200 min-h-[44px] sm:min-h-[48px] md:min-h-[44px] text-base sm:text-lg md:text-sm lg:text-base font-medium ${
+                      isLoading
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:scale-105 active:scale-95"
+                    }`}
+                  >
+                    {isLoading ? (
+                      <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 md:h-4 md:w-4 border-b-2 border-gray-300" />
+                    ) : (
+                      <FaSignOutAlt className="w-4 h-4 sm:w-5 sm:h-5 md:w-4 md:h-4" />
+                    )}
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         );
 
       case "unauthenticated":

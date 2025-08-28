@@ -5,7 +5,7 @@ import type {
   ServiceError,
   LoginPayload,
   UserLoginResponse,
-  ,
+  ValidateSessionResponse,
 } from "../assets/types";
 
 export class UserServices {

@@ -1,110 +1,26 @@
 import { useState } from "react";
+import type { levelPorgressResponse } from "../assets/types";
 
+// Define the type for a single level, which is good practice.
 type Level = {
-  level: number;
-  solved: boolean;
-  password: string | null;
+  ctfProgressId: string;
+  id: string;
+  levelNo: number;
+  password: string;
 };
 
-type CTFGroup = {
-  name: string;
-  totalLevels: number;
-  completedLevels: number;
-  levels: Level[];
-};
-
-export const CTFProgress = () => {
+export const CTFProgress = ({
+  levelPorgressData,
+}: {
+  levelPorgressData: levelPorgressResponse[];
+}) => {
+  // The state now correctly stores the name of the expanded CTF.
+  // Initial state is "Frostling", so that CTF will be expanded by default if it exists.
   const [expandedCTF, setExpandedCTF] = useState<string | null>("Frostling");
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
-  // Generate levels function to avoid repetition
-  const generateLevels = (
-    total: number,
-    completed: number,
-    passwords: string[]
-  ) => {
-    return Array.from({ length: total }, (_, i) => ({
-      level: i,
-      solved: i < completed,
-      password:
-        i < completed ? passwords[i] || `flag{level_${i}_password}` : null,
-    }));
-  };
-
-  const ctfGroups: Record<string, CTFGroup> = {
-    Frostling: {
-      name: "OverTheWire: Frostling",
-      totalLevels: 34,
-      completedLevels: 15,
-      levels: generateLevels(34, 15, [
-        "Frostling0",
-        "NH2SXQwcBdpmTEzi3bvBHMM9H66vVXjL",
-        "rRGizSaX8Mk1RTb1CNQoXTcYZWU6lgzi",
-        "aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG",
-        "2EW7BBsr6aMMoJ2HjW067dm8EgX26xNe",
-        "lrIWWI6bB37kxfiCQchtPiR5XOAm7kQO",
-        "koReBOKuIDDepwhWk7jZC0RTdopnAYKh",
-        "HKBPTKQnIay4Fw76bEy8PVxKEDQRKTzs",
-        "UsvVyFSfZZWbi6wgC7dAFyFuR6jQQUhR",
-        "IFukwKGsFW8MOq3IRFqrxE1hxTNEbUPR",
-        "5Te8Y4drgCRfCx8ugdwuEX8KFC6k2EUu",
-        "dfwvzFQi4mU0wfNbFOe9RoWskMLg7eEc",
-        "6zPeziLdR2RKNdNYFNb6nVCKzphlXHBM",
-        "JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv",
-        "jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt",
-      ]),
-    },
-    natas: {
-      name: "OverTheWire: Natas",
-      totalLevels: 34,
-      completedLevels: 8,
-      levels: generateLevels(34, 8, [
-        "natas0",
-        "gtVrDuiDfck831PqWsLEZy5gyDz1clto",
-        "sJIJNW6ucpu6HPZ1ZAchaDtwd7oGrD14",
-        "Z9tkRkWmpt9Qr7XrR5jWRkgOU901swEZ",
-        "4wcYUJFw0k0XLSIgCW6q7LgTyeqlEJn5",
-        "iX6IOfmpN7AYlWQyRZzBDXQ5Qa4LLYy6",
-        "aGoY4q2kG7t4gTLsYqXhznNOz5WZtNzU",
-        "7z3hqJGnNw4SBLQl0XqHqgCZMEoINE1N",
-      ]),
-    },
-    krypton: {
-      name: "OverTheWire: Krypton",
-      totalLevels: 7,
-      completedLevels: 4,
-      levels: generateLevels(7, 4, [
-        "WELCOME",
-        "LEVEL1PASSWORDISTHIS",
-        "CAESARCIPHERSHIFT3",
-        "SUBSTITUTIONCIPHER",
-      ]),
-    },
-    picoctf: {
-      name: "PicoCTF 2024",
-      totalLevels: 20,
-      completedLevels: 12,
-      levels: generateLevels(20, 12, [
-        "picoCTF{welcome_to_cybersec}",
-        "picoCTF{basic_buffer_overflow}",
-        "picoCTF{sql_injection_found}",
-        "picoCTF{xss_vulnerability_detected}",
-        "picoCTF{file_inclusion_exploit}",
-        "picoCTF{directory_traversal_success}",
-        "picoCTF{command_injection_works}",
-        "picoCTF{reverse_engineering_done}",
-        "picoCTF{binary_exploitation_complete}",
-        "picoCTF{crypto_challenge_solved}",
-        "picoCTF{steganography_hidden_message}",
-        "picoCTF{forensics_evidence_found}",
-      ]),
-    },
-  };
-
   const showPassword = (level: Level) => {
-    if (level.solved && level.password) {
-      setSelectedLevel(level);
-    }
+    setSelectedLevel(level);
   };
 
   return (
@@ -117,59 +33,43 @@ export const CTFProgress = () => {
       </div>
 
       <div className="space-y-6">
-        {Object.entries(ctfGroups).map(([key, ctf]) => (
+        {/* Correctly map over the array directly. */}
+        {/* Use a stable and unique key like ctf.id for the list items. */}
+        {levelPorgressData.map((ctf) => (
           <div
-            key={key}
+            key={ctf.id}
             className="border border-gray-700 rounded-lg bg-gray-800/30"
           >
             {/* CTF Header */}
             <div
-              onClick={() => setExpandedCTF(expandedCTF === key ? null : key)}
+              // Toggle expansion based on the ctfName
+              onClick={() =>
+                setExpandedCTF(expandedCTF === ctf.ctfName ? null : ctf.ctfName)
+              }
               className="p-4 cursor-pointer hover:bg-gray-800/50 transition-colors"
             >
               <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold text-white">{ctf.name}</h3>
-                <div className="flex items-center gap-4">
-                  <span className="text-green-400 font-medium">
-                    {ctf.completedLevels}/{ctf.totalLevels}
-                  </span>
-                  <div className="w-32 bg-gray-700 rounded-full h-2">
-                    <div
-                      className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${
-                          (ctf.completedLevels / ctf.totalLevels) * 100
-                        }%`,
-                      }}
-                    />
-                  </div>
-                  <span className="text-gray-400 text-xl font-mono">
-                    {expandedCTF === key ? "−" : "+"}
-                  </span>
-                </div>
+                <h3 className="text-xl font-bold text-white">{ctf.ctfName}</h3>
+                {/* Optional: Add an indicator for expansion state */}
+                <span className="text-gray-400 transform transition-transform">
+                  {expandedCTF === ctf.ctfName ? "▲" : "▼"}
+                </span>
               </div>
             </div>
 
             {/* Expandable Level Grid */}
-            {expandedCTF === key && (
+            {/* Check for expansion based on ctfName */}
+            {expandedCTF === ctf.ctfName && (
               <div className="p-4 border-t border-gray-700">
                 <div className="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-12 lg:grid-cols-15 xl:grid-cols-20 gap-2">
-                  {ctf.levels.map((level) => (
+                  {ctf.ctfClaimeds.map((level) => (
                     <div
-                      key={level.level}
-                      className={`w-10 h-10 rounded flex items-center justify-center text-sm font-medium transition-all cursor-pointer ${
-                        level.solved
-                          ? "bg-green-600 text-white hover:bg-green-500 hover:scale-105 shadow-lg"
-                          : "bg-gray-700 text-gray-400 hover:bg-gray-600"
-                      }`}
+                      key={level.levelNo}
+                      className={`w-10 h-10 rounded flex items-center justify-center text-sm font-medium transition-all cursor-pointer bg-green-500/20 text-green-300 hover:bg-green-500/40`}
                       onClick={() => showPassword(level)}
-                      title={
-                        level.solved
-                          ? `Level ${level.level} - Click to view password`
-                          : `Level ${level.level} - Not completed`
-                      }
+                      title={`Level ${level.levelNo} - Click to view password`}
                     >
-                      {level.level}
+                      {level.levelNo}
                     </div>
                   ))}
                 </div>
@@ -179,7 +79,7 @@ export const CTFProgress = () => {
         ))}
       </div>
 
-      {/* Password Modal */}
+      {/* Password Modal (No changes needed here) */}
       {selectedLevel && (
         <div
           className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
@@ -191,7 +91,7 @@ export const CTFProgress = () => {
           >
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-white text-xl font-bold">
-                Level {selectedLevel.level} Password
+                Level {selectedLevel.levelNo} Password
               </h3>
               <button
                 onClick={() => setSelectedLevel(null)}
