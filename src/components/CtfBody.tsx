@@ -1,17 +1,11 @@
-import { useState } from "react";
-import "@xterm/xterm/css/xterm.css";
-import { WebTerminal } from "./XtremTerminal";
-import LevelServiceInstance from "../services/ctf.service";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import '@xterm/xterm/css/xterm.css';
+import { WebTerminal } from './XtremTerminal';
+import LevelServiceInstance from '../services/ctf.service';
+import { useParams } from 'react-router-dom';
 
-type Difficulty = "beginner" | "intermediate" | "advanced" | "expert";
-type Category =
-  | "fileexploration"
-  | "crypto"
-  | "web"
-  | "binary"
-  | "forensics"
-  | "network";
+type Difficulty = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+type Category = 'fileexploration' | 'crypto' | 'web' | 'binary' | 'forensics' | 'network';
 
 interface FileData {
   filename: string;
@@ -21,6 +15,9 @@ interface FileData {
 }
 
 interface LevelData {
+  levelNo: number;
+  ctfName: string;
+  id: string;
   uniqueId: string;
   goal: string;
   description: string;
@@ -42,24 +39,28 @@ interface CtfBodyProps {
 }
 
 export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
-  const [flagInput, setFlagInput] = useState("");
+  const [flagInput, setFlagInput] = useState('');
   const { ctfName } = useParams<string>();
   const [submissionResult, setSubmissionResult] = useState<{
-    type: "success" | "error" | null;
+    type: 'success' | 'error' | null;
     message: string;
-  }>({ type: null, message: "" });
+  }>({ type: null, message: '' });
 
-  const levelNumber = levelData.uniqueId.split("-level")[1] || "0";
+  const levelNumber = levelData.uniqueId.split('-level')[1] || '0';
   const nextLevel = nextLevelNumber || parseInt(levelNumber) + 1;
-
+  const [crendetials, setCredentails] = useState({
+    host: '',
+    username: '',
+    password: '',
+    Port: 0,
+  });
   const username = `level${levelNumber}`;
-  const password = `level${levelNumber}`;
 
   const handleFlagSubmit = async () => {
     if (!flagInput.trim()) {
       setSubmissionResult({
-        type: "error",
-        message: "Please enter a flag before submitting",
+        type: 'error',
+        message: 'Please enter a flag before submitting',
       });
       return;
     }
@@ -67,7 +68,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
     const response = await LevelServiceInstance.saveCtfLevel(
       ctfName,
       +levelNumber,
-      flagInput.trim()
+      flagInput.trim(),
     );
     console.log(response);
     // if (flagInput.trim() === expectedFlag) {
@@ -83,12 +84,12 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
     // }
 
     setTimeout(() => {
-      setSubmissionResult({ type: null, message: "" });
+      setSubmissionResult({ type: null, message: '' });
     }, 3000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleFlagSubmit();
     }
   };
@@ -98,65 +99,68 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
       const text = await navigator.clipboard.readText();
       setFlagInput(text);
     } catch (error) {
-      console.error("Failed to read clipboard:", error);
+      console.error('Failed to read clipboard:', error);
       setSubmissionResult({
-        type: "error",
-        message: "Failed to read from clipboard",
+        type: 'error',
+        message: 'Failed to read from clipboard',
       });
     }
   };
   const getDifficultyColor = (difficulty: Difficulty) => {
     switch (difficulty) {
-      case "beginner":
-        return "text-green-400";
-      case "intermediate":
-        return "text-yellow-400";
-      case "advanced":
-        return "text-orange-400";
-      case "expert":
-        return "text-red-400";
+      case 'beginner':
+        return 'text-green-400';
+      case 'intermediate':
+        return 'text-yellow-400';
+      case 'advanced':
+        return 'text-orange-400';
+      case 'expert':
+        return 'text-red-400';
       default:
-        return "text-gray-400";
+        return 'text-gray-400';
     }
   };
 
   const getCategoryIcon = (category: Category) => {
     switch (category) {
-      case "fileexploration":
-        return "📁";
-      case "crypto":
-        return "🔐";
-      case "web":
-        return "🌐";
-      case "binary":
-        return "💾";
-      case "forensics":
-        return "🔍";
-      case "network":
-        return "🌐";
+      case 'fileexploration':
+        return '📁';
+      case 'crypto':
+        return '🔐';
+      case 'web':
+        return '🌐';
+      case 'binary':
+        return '💾';
+      case 'forensics':
+        return '🔍';
+      case 'network':
+        return '🌐';
       default:
-        return "📝";
+        return '📝';
     }
   };
-
+  console.log(levelData.ctfName);
+  useEffect(() => {
+    if (levelData.ctfName === 'frostling')
+      setCredentails({
+        host: 'Frostling.labs.overthewire.org',
+        Port: 2220,
+        username: 'level0',
+        password: 'level0',
+      });
+  }, []);
   return (
     <section className="px-4 py-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-4xl font-bold">Frostling Level {levelNumber}</h2>
         <div className="flex items-center gap-4">
-          <span
-            className={`text-sm font-medium ${getDifficultyColor(
-              levelData.difficulty
-            )}`}
-          >
+          <span className={`text-sm font-medium ${getDifficultyColor(levelData.difficulty)}`}>
             {levelData.difficulty.toUpperCase()}
           </span>
           <span className="text-sm text-gray-400">
             {getCategoryIcon(levelData.category)} {levelData.category}
           </span>
-          <span className="text-sm text-gray-400">
-            ⏱️ ~{levelData.estimatedTime} min
-          </span>
+          <span className="text-sm text-gray-400">⏱️ ~{levelData.estimatedTime} min</span>
         </div>
       </div>
 
@@ -168,26 +172,24 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
         <div className="py-6">
           <p className="text-xl text-slate-500">🎯 Level Goal</p>
           <p className="text-lg">{levelData.goal}</p>
-          <p className="text-base text-gray-600 mt-2">
-            {levelData.description}
-          </p>
+          <p className="text-base text-gray-600 mt-2">{levelData.description}</p>
         </div>
 
         <div className="bg-slate-900 text-white p-4 rounded-xl shadow-md">
           <p className="text-lg font-semibold">🔑 Credentials</p>
           <ul className="mt-2 space-y-1">
             <li>
-              <span className="font-bold">Host:</span>{" "}
-              Frostling.labs.overthewire.org
+              <span className="font-bold">Host:</span> {crendetials.host}
             </li>
             <li>
-              <span className="font-bold">Port:</span> 2220
+              <span className="font-bold">Port:</span>
+              {crendetials.Port}
             </li>
             <li>
               <span className="font-bold">Username:</span> {username}
             </li>
             <li>
-              <span className="font-bold">Password:</span> {password}
+              <span className="font-bold">Password:</span> {crendetials.password}
             </li>
           </ul>
         </div>
@@ -205,10 +207,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             <p className="text-lg font-semibold">🛠️ Useful Commands:</p>
             <div className="flex flex-wrap gap-3 mt-3">
               {levelData.commands.map((command, index) => (
-                <div
-                  key={index}
-                  className="bg-slate-800 text-green-400 p-3 rounded-lg"
-                >
+                <div key={index} className="bg-slate-800 text-green-400 p-3 rounded-lg">
                   <code>{command}</code>
                 </div>
               ))}
@@ -221,14 +220,9 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             <p className="text-lg font-semibold">📄 Files Information:</p>
             <div className="space-y-3 mt-3">
               {levelData.files.map((file, index) => (
-                <div
-                  key={index}
-                  className="bg-slate-100 border border-slate-300 p-4 rounded-lg"
-                >
+                <div key={index} className="bg-slate-100 border border-slate-300 p-4 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-slate-800">
-                      {file.filename}
-                    </span>
+                    <span className="font-bold text-slate-800">{file.filename}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-slate-600">
                         Permissions: {file.permissions}
@@ -289,9 +283,9 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
           {submissionResult.type && (
             <div
               className={`p-3 rounded-lg flex items-center gap-2 ${
-                submissionResult.type === "success"
-                  ? "bg-green-900/50 border border-green-500/50 text-green-400"
-                  : "bg-red-900/50 border border-red-500/50 text-red-400"
+                submissionResult.type === 'success'
+                  ? 'bg-green-900/50 border border-green-500/50 text-green-400'
+                  : 'bg-red-900/50 border border-red-500/50 text-red-400'
               }`}
             >
               {submissionResult.message}

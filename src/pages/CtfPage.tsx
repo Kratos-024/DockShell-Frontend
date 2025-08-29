@@ -1,49 +1,39 @@
-import { motion } from "framer-motion";
-import { NavBar } from "../components/NavBar";
-import { Footer } from "../components/Footer";
-import CtfMenu from "../components/CtfMenu";
-import { CtfBody } from "../components/CtfBody";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import LevelServiceInstance from "../services/ctf.service";
-import type { LevelData } from "../assets/types";
+import { motion } from 'framer-motion';
+import { NavBar } from '../components/NavBar';
+import { Footer } from '../components/Footer';
+import CtfMenu from '../components/CtfMenu';
+import { CtfBody } from '../components/CtfBody';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import LevelServiceInstance from '../services/ctf.service';
+import type { LevelData } from '../assets/types';
 const skeletonLevelData: LevelData = {
-  uniqueId: "loading...",
-  goal: "Loading level goal...",
-  description: "Loading level description...",
-  commands: ["Loading..."],
-  hints: ["Loading hints..."],
-  links: ["#"],
-  expectedOutput: "Loading expected output...",
-  difficulty: "beginner",
-  category: "fileexploration",
+  uniqueId: 'loading...',
+  goal: 'Loading level goal...',
+  description: 'Loading level description...',
+  commands: ['Loading...'],
+  hints: ['Loading hints...'],
+  links: ['#'],
+  expectedOutput: 'Loading expected output...',
+  difficulty: 'beginner',
+  category: 'fileexploration',
   estimatedTime: 0,
   createdAt: new Date(),
 };
-export const CtfPage = ({
-  menuHandler,
-  menu,
-}: {
-  menu: boolean;
-  menuHandler: () => void;
-}) => {
-  const [levelDetails, setLevelDetails] =
-    useState<LevelData>(skeletonLevelData);
+export const CtfPage = ({ menuHandler, menu }: { menu: boolean; menuHandler: () => void }) => {
+  const [levelDetails, setLevelDetails] = useState<LevelData>(skeletonLevelData);
   const { ctfLevel, ctfName } = useParams();
   useEffect(() => {
     const levelGetterHandler = async () => {
       try {
         if (ctfLevel && ctfName) {
-          const response = await LevelServiceInstance.getCtfLevel(
-            ctfName,
-            ctfLevel
-          );
-          if ("statusCode" in response && response.statusCode === 200) {
+          const response = await LevelServiceInstance.getCtfLevel(ctfName, ctfLevel);
+          if ('statusCode' in response && response.statusCode === 200) {
             setLevelDetails(response.data);
           }
         }
       } catch (error) {
-        console.log("Error has been occured in levelGetterHandler", error);
+        console.log('Error has been occured in levelGetterHandler', error);
       }
     };
     levelGetterHandler();
@@ -52,14 +42,14 @@ export const CtfPage = ({
     <motion.section
       initial={{ marginLeft: 0 }}
       animate={{
-        marginLeft: menu ? "280px" : "0px",
-        width: menu ? "calc(100% - 280px)" : "100%",
+        marginLeft: menu ? '280px' : '0px',
+        width: menu ? 'calc(100% - 280px)' : '100%',
       }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="min-h-screen  relative z-10"
       style={{
-        paddingLeft: "0",
-        paddingRight: "0",
+        paddingLeft: '0',
+        paddingRight: '0',
       }}
     >
       <NavBar menu={menu} menuHandler={menuHandler} />

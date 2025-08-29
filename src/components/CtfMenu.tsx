@@ -1,25 +1,20 @@
-import { useState } from "react";
-import { FaTrophy } from "react-icons/fa";
-import { motion } from "framer-motion";
-import { IoMdClose } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { FaTrophy } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import { IoMdClose } from 'react-icons/io';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export const CtfMenu = ({
-  menuHandler,
-  menu,
-}: {
-  menu: boolean;
-  menuHandler: () => void;
-}) => {
+export const CtfMenu = ({ menuHandler, menu }: { menu: boolean; menuHandler: () => void }) => {
   const [unlockedLevels] = useState(5);
+  const { ctfName } = useParams();
   const navigate = useNavigate();
   const handleLevelClick = (level: number) => {
-    navigate(`/ctf/level${level}/frostling`);
+    navigate(`/ctf/level${level}/${ctfName}`);
     window.location.reload();
   };
 
   const menuVariants = {
-    hidden: { x: "-100%", opacity: 0 },
+    hidden: { x: '-100%', opacity: 0 },
     visible: { x: 0, opacity: 1 },
   };
 
@@ -43,8 +38,8 @@ export const CtfMenu = ({
       <motion.section
         variants={menuVariants}
         initial="hidden"
-        animate={menu ? "visible" : "hidden"}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
+        animate={menu ? 'visible' : 'hidden'}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
         className="fixed bg-black/20 backdrop-blur-sm top-0 left-0 h-screen z-50
           w-[240px] sm:w-[260px] md:w-[280px]
           shadow-2xl border-r border-gray-700"
@@ -62,10 +57,7 @@ export const CtfMenu = ({
             <a href="/">Frostling</a>
           </motion.h2>
 
-          <div
-            className=" cursor-pointer absolute right-5 top-5"
-            onClick={menuHandler}
-          >
+          <div className=" cursor-pointer absolute right-5 top-5" onClick={menuHandler}>
             <IoMdClose className="w-[28px] h-[28px] rotate-180 text-white" />
           </div>
 
@@ -100,7 +92,7 @@ export const CtfMenu = ({
               <motion.div
                 variants={listVariants}
                 initial="hidden"
-                animate={menu ? "visible" : "hidden"}
+                animate={menu ? 'visible' : 'hidden'}
                 className="flex flex-col gap-2  
                 overflow-y-auto custom-scrollbar"
               >

@@ -5,7 +5,8 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
   return (
     <div
       data-slot="card"
-      className="text-card-foreground flex flex-col max-md:w-[380px] mx-auto max-md:pb-3
+      className="text-card-foreground flex flex-col 
+      max-md:w-[310px] max-lg: mx-auto max-md:pb-3
        gap-4 md:gap-6 rounded-xl border shadow-sm
         group cursor-pointer transition-all
          duration-300 hover:shadow-lg
@@ -89,13 +90,17 @@ export const LabSection = ({ header, labs }: { header: string; labs: LabInter[] 
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] text-green-600 mb-6 md:mb-8">
           {header}
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-3 md:gap-6">
-          <Link to={`/ctf/level0/frostling`}>
-            {' '}
-            {labs.map((lab: LabInter, idx: number) => {
-              return <LabCard key={idx} lab={lab} />;
-            })}
-          </Link>
+        <div
+          className="grid grid-cols-4 max-lg:grid-cols-2 max-md:grid-cols-1
+          gap-4 px-3 md:gap-6"
+        >
+          {labs.map((lab: LabInter, idx: number) => {
+            return (
+              <Link to={`/ctf/level0/${lab.title}`}>
+                <LabCard key={idx} lab={lab} />
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
