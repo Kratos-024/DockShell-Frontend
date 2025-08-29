@@ -1,24 +1,24 @@
 import type LabInter from './types';
 
 export const labs: LabInter[] = [
-  {
-    imgSrc: 'https://f4.bcbits.com/img/a3572376747_16.jpg',
-    difficulty: 'Easy',
-    topic: 'Linux Commands',
-    title: 'frostling',
-    subHeader: 'Master basic Linux command exploitation to solve challenges safely.',
-    solved: 124,
-  },
-  {
-    imgSrc:
-      'https://image.api.playstation.com/cdn/UP9000/BCUS98232_00/0gXJVzxkPwjwmSs9f8P5KJcAsgZIlr6E.png?w=440&thumb=false',
-    difficulty: 'Medium',
-    topic: 'Networking',
-    title: 'hades',
-    subHeader:
-      'Master core Linux networking tools—nmap, nc, tcpdump, and beyond—to uncover and control your network.',
-    solved: 0,
-  },
+  // {
+  //   imgSrc: 'https://f4.bcbits.com/img/a3572376747_16.jpg',
+  //   difficulty: 'Easy',
+  //   topic: 'Linux Commands',
+  //   title: 'frostling',
+  //   subHeader: 'Master basic Linux command exploitation to solve challenges safely.',
+  //   solved: 124,
+  // },
+  // {
+  //   imgSrc:
+  //     'https://image.api.playstation.com/cdn/UP9000/BCUS98232_00/0gXJVzxkPwjwmSs9f8P5KJcAsgZIlr6E.png?w=440&thumb=false',
+  //   difficulty: 'Medium',
+  //   topic: 'Networking',
+  //   title: 'hades',
+  //   subHeader:
+  //     'Master core Linux networking tools—nmap, nc, tcpdump, and beyond—to uncover and control your network.',
+  //   solved: 0,
+  // },
   // {
   //   imgSrc: "https://picsum.photos/400/200?random=2",
   //   difficulty: "Medium",

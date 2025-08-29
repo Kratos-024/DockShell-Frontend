@@ -8,6 +8,9 @@ import { useParams } from 'react-router-dom';
 import LevelServiceInstance from '../services/ctf.service';
 import type { LevelData } from '../assets/types';
 const skeletonLevelData: LevelData = {
+  ctfName: '',
+  levelNo: 0,
+  id: '',
   uniqueId: 'loading...',
   goal: 'Loading level goal...',
   description: 'Loading level description...',
@@ -22,6 +25,8 @@ const skeletonLevelData: LevelData = {
 };
 export const CtfPage = ({ menuHandler, menu }: { menu: boolean; menuHandler: () => void }) => {
   const [levelDetails, setLevelDetails] = useState<LevelData>(skeletonLevelData);
+  const [totalLevels, settotalLevels] = useState<number>(0);
+
   const { ctfLevel, ctfName } = useParams();
   useEffect(() => {
     const levelGetterHandler = async () => {
@@ -29,7 +34,8 @@ export const CtfPage = ({ menuHandler, menu }: { menu: boolean; menuHandler: () 
         if (ctfLevel && ctfName) {
           const response = await LevelServiceInstance.getCtfLevel(ctfName, ctfLevel);
           if ('statusCode' in response && response.statusCode === 200) {
-            setLevelDetails(response.data);
+            setLevelDetails(response.data.level);
+            settotalLevels(response.data.ctfTotalLevels.totalLevels);
           }
         }
       } catch (error) {
@@ -54,7 +60,7 @@ export const CtfPage = ({ menuHandler, menu }: { menu: boolean; menuHandler: () 
     >
       <NavBar menu={menu} menuHandler={menuHandler} />
       <div className="px-3">
-        <CtfMenu menuHandler={menuHandler} menu={menu} />
+        <CtfMenu totalLevels={totalLevels} menuHandler={menuHandler} menu={menu} />
         <CtfBody levelData={levelDetails} nextLevelNumber={+{ ctfLevel } + 1} />
         <Footer />
       </div>

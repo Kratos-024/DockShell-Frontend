@@ -4,7 +4,15 @@ import { motion } from 'framer-motion';
 import { IoMdClose } from 'react-icons/io';
 import { useNavigate, useParams } from 'react-router-dom';
 
-export const CtfMenu = ({ menuHandler, menu }: { menu: boolean; menuHandler: () => void }) => {
+export const CtfMenu = ({
+  totalLevels,
+  menuHandler,
+  menu,
+}: {
+  totalLevels: number | null;
+  menu: boolean;
+  menuHandler: () => void;
+}) => {
   const [unlockedLevels] = useState(5);
   const { ctfName } = useParams();
   const navigate = useNavigate();
@@ -30,8 +38,10 @@ export const CtfMenu = ({ menuHandler, menu }: { menu: boolean; menuHandler: () 
   //   hidden: { opacity: 0, scale: 0.8 },
   //   visible: { opacity: 1, scale: 1 },
   // };
-
-  const levels = Array.from({ length: 40 }, (_, i) => i);
+  if (!totalLevels || !ctfName) {
+    return;
+  }
+  const levels = Array.from({ length: totalLevels }, (_, i) => i);
 
   return (
     <>
@@ -54,7 +64,7 @@ export const CtfMenu = ({ menuHandler, menu }: { menu: boolean; menuHandler: () 
             className="text-center font-semibold mb-6 sm:mb-8 md:mb-10
               text-xl sm:text-2xl md:text-[28px]"
           >
-            <a href="/">Frostling</a>
+            <a href="/">{ctfName.charAt(0).toUpperCase() + ctfName.slice(1).toLowerCase()}</a>
           </motion.h2>
 
           <div className=" cursor-pointer absolute right-5 top-5" onClick={menuHandler}>

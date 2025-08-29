@@ -1,6 +1,16 @@
 export interface LevelResponse {
   statusCode: number;
-  data: LevelData;
+  data: {
+    level: LevelData;
+    ctfTotalLevels: {
+      totalLevels: number;
+    };
+  };
+}
+export interface ctfResponse {
+  message: string;
+  statusCode: number;
+  data: LabInter[];
 }
 export interface ValidateSessionResponse {
   statusCode: 200;
@@ -10,22 +20,18 @@ export interface ValidateSessionResponse {
   };
 }
 export default interface LabInter {
+  ctfName: string;
+  totalLevels: number;
   title: string;
-  imgSrc: string;
-  difficulty: "Easy" | "Medium" | "Hard";
+  totalPlayers: number;
   subHeader: string;
-  solved: number;
+  difficulty: string;
   topic: string;
+  imgSrc: string;
 }
 // Types
-type Difficulty = "beginner" | "intermediate" | "advanced" | "expert";
-type Category =
-  | "fileexploration"
-  | "crypto"
-  | "web"
-  | "binary"
-  | "forensics"
-  | "network";
+type Difficulty = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+type Category = 'fileexploration' | 'crypto' | 'web' | 'binary' | 'forensics' | 'network';
 
 interface FileData {
   filename: string;
@@ -35,6 +41,9 @@ interface FileData {
 }
 
 export interface LevelData {
+  ctfName: string;
+  levelNo: number;
+  id: string;
   uniqueId: string;
   goal: string;
   description: string;
@@ -86,10 +95,7 @@ export interface ServiceError {
   error: string;
 }
 
-export type CreateAccountPayload = Omit<
-  UserData,
-  "id" | "createdAt" | "updatedAt" | "LastName"
-> & {
+export type CreateAccountPayload = Omit<UserData, 'id' | 'createdAt' | 'updatedAt' | 'LastName'> & {
   lastName: string; // Frontend forms usually use camelCase
   password: string;
 };
@@ -108,6 +114,6 @@ export interface levelPorgressResponse {
       id: string;
       levelNo: number;
       password: string;
-    }
+    },
   ];
 }

@@ -3,6 +3,7 @@ import '@xterm/xterm/css/xterm.css';
 import { WebTerminal } from './XtremTerminal';
 import LevelServiceInstance from '../services/ctf.service';
 import { useParams } from 'react-router-dom';
+import { ChatProvider } from '../pages/AiChatPage';
 
 type Difficulty = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 type Category = 'fileexploration' | 'crypto' | 'web' | 'binary' | 'forensics' | 'network';
@@ -152,7 +153,10 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
   return (
     <section className="px-4 py-5">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-4xl font-bold">Frostling Level {levelNumber}</h2>
+        <h2 className="text-4xl font-bold">
+          {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}{' '}
+          Level {levelNumber}
+        </h2>
         <div className="flex items-center gap-4">
           <span className={`text-sm font-medium ${getDifficultyColor(levelData.difficulty)}`}>
             {levelData.difficulty.toUpperCase()}
@@ -197,7 +201,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
           <div className="mt-6">
             <p className="text-lg font-semibold">💻 Connect with SSH:</p>
             <pre className="bg-slate-800 text-green-400 p-3 rounded-lg mt-2 overflow-x-auto">
-              ssh {username}@Frostling.labs.overthewire.org -p 2220
+              ssh {username}@{levelData.ctfName}.labs.overthewire.org -p 2220
             </pre>
           </div>
         )}
@@ -215,14 +219,14 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
           </div>
         )}
 
-        {levelData.files && levelData.files.length > 0 && (
+        {/* {Array(levelData.files) && Array(levelData.files).length > 0 && (
           <div className="mt-6">
             <p className="text-lg font-semibold">📄 Files Information:</p>
             <div className="space-y-3 mt-3">
-              {levelData.files.map((file, index) => (
+              {Array(levelData.files).map((file:unknown, index) => (
                 <div key={index} className="bg-slate-100 border border-slate-300 p-4 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-slate-800">{file.filename}</span>
+                    <span className="font-bold text-slate-800">{file?.filename}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-slate-600">
                         Permissions: {file.permissions}
@@ -241,7 +245,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Flag Submission Section */}
         <div className="mt-8 p-6 bg-gray-800 rounded-xl border border-gray-600">
@@ -330,6 +334,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             </div>
           </div>
         )}
+        <ChatProvider />
       </div>
     </section>
   );

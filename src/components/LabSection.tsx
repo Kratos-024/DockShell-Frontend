@@ -23,7 +23,8 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
           <img
             alt={lab.title}
             className="w-full h-32 sm:h-40 md:h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-            src={lab.imgSrc}
+            loading="lazy"
+            src={lab.imgSrc || undefined}
           />
           <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col sm:flex-row gap-1 sm:gap-2">
             <span
@@ -72,7 +73,7 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
               </svg>
-              <span className="text-xs sm:text-sm font-medium">{lab.solved} solved</span>
+              <span className="text-xs sm:text-sm font-medium">{lab.totalPlayers} solved</span>
             </div>
             <div className="text-xs text-green-400 hidden sm:block">Click to explore →</div>
             <div className="text-xs text-green-400 block sm:hidden">→</div>
@@ -96,7 +97,7 @@ export const LabSection = ({ header, labs }: { header: string; labs: LabInter[] 
         >
           {labs.map((lab: LabInter, idx: number) => {
             return (
-              <Link to={`/ctf/level0/${lab.title}`}>
+              <Link key={idx} to={`/ctf/level0/${lab.title}`}>
                 <LabCard key={idx} lab={lab} />
               </Link>
             );

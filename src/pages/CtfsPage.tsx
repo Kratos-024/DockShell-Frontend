@@ -1,9 +1,11 @@
-import { labs } from '../assets/contstant';
+import { useEffect, useState } from 'react';
 import { CtfHero } from '../components/CtfHero';
 import { Footer } from '../components/Footer';
 import { LabSection } from '../components/LabSection';
 import { NavBar } from '../components/NavBar';
 import { Shield, Globe, Lock, AlertTriangle } from 'lucide-react';
+import LevelServiceInstance from '../services/ctf.service';
+import type LabInter from '../assets/types';
 
 export const CtfsPage = ({
   isModalOpen,
@@ -12,6 +14,33 @@ export const CtfsPage = ({
   isModalOpen: boolean;
   handleLoginClick: () => void | undefined;
 }) => {
+  const [labs, setLabs] = useState<LabInter[]>([
+    {
+      ctfName: '',
+      totalLevels: 0,
+      title: '',
+      imgSrc: '',
+      totalPlayers: 0,
+      subHeader: '',
+      difficulty: '',
+      topic: 's',
+    },
+  ]);
+  useEffect(() => {
+    const getCtfHandler = async () => {
+      try {
+        const response = await LevelServiceInstance.getCtf();
+        if ('data' in response) {
+          setLabs(response.data);
+        } else {
+          console.error(response.error);
+        }
+      } catch (error) {
+        console.log('Error has been occured', error);
+      }
+    };
+    getCtfHandler();
+  }, []);
   return (
     <section
       className="bg-gradient-to-br
