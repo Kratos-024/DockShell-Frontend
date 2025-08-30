@@ -1,78 +1,130 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type KeyboardEvent } from 'react';
 import '@xterm/xterm/css/xterm.css';
+import { toast } from 'react-toastify';
 import { WebTerminal } from './XtremTerminal';
 import { ChatProvider } from '../pages/AiChatPage';
 import type { LevelData } from '../assets/types';
+import LevelServiceInstance, { ApiError } from '../services/ctf.service';
+
+// --- TYPE DEFINITIONS ---
 type Difficulty = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 type Category = 'fileexploration' | 'crypto' | 'web' | 'binary' | 'forensics' | 'network';
+
 interface CtfBodyProps {
-  levelData: LevelData; // expectedFlag: string;
+  // levelData can be null or undefined while the parent component is loading it.
+  levelData?: LevelData | null;
   nextLevelNumber?: number;
 }
+
+// --- A reusable Skeleton Loader Component ---
+// This provides a better user experience than a simple spinner by showing a placeholder layout.
+const SkeletonLoader = ({ className }: { className?: string }) => (
+  <div className={`bg-gray-700 animate-pulse rounded-md ${className}`} />
+);
+
+// --- THE MAIN COMPONENT ---
 export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
+  // --- STATE MANAGEMENT ---
   const [flagInput, setFlagInput] = useState('');
   const [submissionResult, setSubmissionResult] = useState<{
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [credentials, setCredentials] = useState<LevelData['credentials'] | null>(null);
+  useEffect(() => {
+    // This effect runs when levelData changes, updating credentials safely.
+    if (levelData?.credentials) {
+      setCredentials(levelData.credentials);
+    }
+    setFlagInput('');
+    setSubmissionResult({ type: null, message: '' });
+  }, [levelData]);
+
+  if (!levelData) {
+    return (
+      <section className="px-4 py-5 animate-pulse">
+        <div className="flex items-center justify-between mb-4">
+          <SkeletonLoader className="h-10 w-1/2" />
+          <div className="flex items-center gap-4">
+            <SkeletonLoader className="h-6 w-24" />
+            <SkeletonLoader className="h-6 w-24" />
+          </div>
+        </div>
+        <SkeletonLoader className="mt-5 h-80 w-full" />
+        <div className="py-3 mt-5">
+          <div className="py-6">
+            <SkeletonLoader className="h-8 w-1/4 mb-4" />
+            <SkeletonLoader className="h-6 w-full mb-2" />
+            <SkeletonLoader className="h-5 w-3/4" />
+          </div>
+          <SkeletonLoader className="h-40 w-full mt-4" />
+        </div>
+      </section>
+    );
+  }
+
   const levelNumber = levelData.uniqueId.split('-level')[1] || '0';
   const nextLevel = nextLevelNumber || parseInt(levelNumber) + 1;
-  const [crendetials, setCredentials] = useState<LevelData['credentials']>({
-    host: '',
-    username: '',
-    password: '',
-    Port: 0,
-  });
-  console.log(levelData);
   const username = `level${levelNumber}`;
+
   const handleFlagSubmit = async () => {
     if (!flagInput.trim()) {
-      setSubmissionResult({
-        type: 'error',
-        message: 'Please enter a flag before submitting',
-      });
+      const errorMessage = 'Please enter a flag before submitting.';
+      setSubmissionResult({ type: 'error', message: errorMessage });
+      toast.error(errorMessage);
       return;
     }
-    // if (flagInput.trim() === expectedFlag) {
-    //  setSubmissionResult({
-    //   type: "success",
-    //   message: "🎉 Correct! Flag accepted. Level completed!",
-    //  });
-    // } else {
-    //  setSubmissionResult({
-    //   type: "error",
-    //   message: "❌ Incorrect flag. Try again!",
-    //  });
-    // }
-    setTimeout(() => {
-      setSubmissionResult({ type: null, message: '' });
-    }, 3000);
+
+    setIsSubmitting(true);
+
+    try {
+      await LevelServiceInstance.submitCtfFlag(
+        levelData.ctfName,
+        levelData.levelNo,
+        flagInput.trim(),
+      );
+
+      const successMessage = `Correct! Flag accepted. Proceeding to Level ${nextLevel}`;
+      setSubmissionResult({ type: 'success', message: successMessage });
+      toast.success(successMessage);
+      setFlagInput('');
+    } catch (error) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof ApiError) {
+        errorMessage = ` ${error.message}`;
+      } else if (error instanceof Error) {
+        errorMessage = ` ${error.message}`;
+      }
+
+      setSubmissionResult({ type: 'error', message: errorMessage });
+      toast.error(errorMessage);
+      console.error('Flag submission failed:', error);
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => {
+        setSubmissionResult({ type: null, message: '' });
+      }, 5000);
+    }
   };
-  useEffect(() => {
-    setCredentials({
-      host: levelData.credentials?.host || '',
-      username: levelData.credentials?.username || '',
-      password: levelData.credentials?.password || '',
-      Port: levelData.credentials?.Port || 0,
-    });
-  }, [levelData]);
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' && !isSubmitting) {
       handleFlagSubmit();
     }
   };
+
   const pasteFromClipboard = async () => {
     try {
       const text = await navigator.clipboard.readText();
       setFlagInput(text);
+      toast.info('📋 Text pasted from clipboard');
     } catch (error) {
       console.error('Failed to read clipboard:', error);
-      setSubmissionResult({
-        type: 'error',
-        message: 'Failed to read from clipboard',
-      });
+      toast.error('Failed to read from clipboard.');
     }
   };
+
   const getDifficultyColor = (difficulty: Difficulty) => {
     switch (difficulty) {
       case 'beginner':
@@ -87,6 +139,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
         return 'text-gray-400';
     }
   };
+
   const getCategoryIcon = (category: Category) => {
     switch (category) {
       case 'fileexploration':
@@ -105,62 +158,65 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
         return '📝';
     }
   };
+
   return (
     <section className="px-4 py-5">
-      {' '}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-4xl font-bold">
-          {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}
+          {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}{' '}
           Level {levelNumber}
         </h2>
         <div className="flex items-center gap-4">
           <span className={`text-sm font-medium ${getDifficultyColor(levelData.difficulty)}`}>
             {levelData.difficulty.toUpperCase()}
           </span>
-
           <span className="text-sm text-gray-400">
             {getCategoryIcon(levelData.category)} {levelData.category}
           </span>
           <span className="text-sm text-gray-400">⏱️ ~{levelData.estimatedTime} min</span>
-        </div>{' '}
-      </div>{' '}
+        </div>
+      </div>
+
       <div className="mt-5 bg-red-300">
-        <WebTerminal />{' '}
-      </div>{' '}
+        <WebTerminal />
+      </div>
+
       <div className="py-3 mt-5">
         <div className="py-6">
           <p className="text-xl text-slate-500">🎯 Level Goal</p>
           <p className="text-lg">{levelData.goal}</p>
           <p className="text-base text-gray-600 mt-2">{levelData.description}</p>
         </div>
-        <div className="bg-slate-900 text-white p-4 rounded-xl shadow-md">
-          <p className="text-lg font-semibold">🔑 Credentials</p>
-          <ul className="mt-2 space-y-1">
-            <li>
-              <span className="font-bold">Host:</span> {crendetials?.host}{' '}
-            </li>
 
-            <li>
-              <span className="font-bold">Port:</span> {crendetials?.Port}
-            </li>
+        {credentials && (
+          <div className="bg-slate-900 text-white p-4 rounded-xl shadow-md">
+            <p className="text-lg font-semibold">🔑 Credentials</p>
+            <ul className="mt-2 space-y-1">
+              <li>
+                <span className="font-bold">Host:</span> {credentials.host}
+              </li>
+              <li>
+                <span className="font-bold">Port:</span> {credentials.Port}
+              </li>
+              <li>
+                <span className="font-bold">Username:</span> {username}
+              </li>
+              <li>
+                <span className="font-bold">Password:</span> {credentials.password}
+              </li>
+            </ul>
+          </div>
+        )}
 
-            <li>
-              <span className="font-bold">Username:</span> {username}
-            </li>
-
-            <li>
-              <span className="font-bold">Password:</span> {crendetials?.password}
-            </li>
-          </ul>
-        </div>
-        {+levelNumber === 0 && (
+        {+levelNumber === 0 && credentials && (
           <div className="mt-6">
             <p className="text-lg font-semibold">💻 Connect with SSH:</p>
             <pre className="bg-slate-800 text-green-400 p-3 rounded-lg mt-2 overflow-x-auto">
-              ssh {crendetials?.username}@{crendetials?.host} -p {crendetials?.Port}
+              ssh {username}@{credentials.host} -p {credentials.Port}
             </pre>
           </div>
         )}
+
         {levelData.commands && levelData.commands.length > 0 && (
           <div className="mt-6">
             <p className="text-lg font-semibold">🛠️ Useful Commands:</p>
@@ -173,34 +229,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             </div>
           </div>
         )}
-        {/* {Array(levelData.files) && Array(levelData.files).length > 0 && (
-     <div className="mt-6">
-      <p className="text-lg font-semibold">📄 Files Information:</p>
-      <div className="space-y-3 mt-3">
-       {Array(levelData.files).map((file:unknown, index) => (
-        <div key={index} className="bg-slate-100 border border-slate-300 p-4 rounded-lg">
-         <div className="flex items-center justify-between mb-2">
-          <span className="font-bold text-slate-800">{file?.filename}</span>
-          <div className="flex items-center gap-2">
-           <span className="text-sm text-slate-600">
-            Permissions: {file.permissions}
-           </span>
-           {file.hidden && (
-            <span className="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded">
-             Hidden
-            </span>
-           )}
-          </div>
-         </div>
-         <pre className="bg-slate-800 text-green-400 p-3 rounded text-sm overflow-x-auto">
-          {file.content}
-         </pre>
-        </div>
-       ))}
-      </div>
-     </div>
-    )} */}
-        {/* Flag Submission Section */}
+
         <div className="mt-8 p-6 bg-gray-800 rounded-xl border border-gray-600">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-bold text-white">🚩 Submit Flag</h3>
@@ -210,53 +239,55 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
           </div>
 
           <div className="flex gap-3 mb-4">
-            <div className="flex-1">
-              <input
-                type="text"
-                value={flagInput}
-                onChange={(e) => setFlagInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Enter the password for next level..."
-                className="w-full px-4 py-3 bg-gray-900 text-white border border-gray-600 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500 font-mono text-sm"
-              />
-            </div>
-
+            <input
+              type="text"
+              value={flagInput}
+              onChange={(e) => setFlagInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Enter the password for the next level..."
+              className="w-full px-4 py-3 bg-gray-900 text-white border border-gray-600 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500 font-mono text-sm"
+              disabled={isSubmitting}
+            />
             <button
               onClick={pasteFromClipboard}
-              className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              disabled={isSubmitting}
+              className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
               title="Paste from clipboard"
             >
-              📋 <span className="hidden sm:inline">Paste</span>{' '}
+              📋 <span className="hidden sm:inline">Paste</span>
             </button>
-
             <button
               onClick={handleFlagSubmit}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+              disabled={isSubmitting}
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center gap-2"
             >
-              🚀 <span className="hidden sm:inline">Submit</span>{' '}
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Submitting...</span>
+                </>
+              ) : (
+                <>🚀 Submit</>
+              )}
             </button>
           </div>
 
           {submissionResult.type && (
             <div
-              className={`p-3 rounded-lg flex items-center gap-2 ${
+              className={`p-4 rounded-lg flex items-center gap-3 transition-all duration-300 ${
                 submissionResult.type === 'success'
-                  ? 'bg-green-900/50 border border-green-500/50 text-green-400'
-                  : 'bg-red-900/50 border border-red-500/50 text-red-400'
+                  ? 'bg-green-900/50 border-2 border-green-500/70 text-green-300'
+                  : 'bg-red-900/50 border-2 border-red-500/70 text-red-300'
               }`}
             >
-              {submissionResult.message}
-            </div>
-          )}
-
-          {levelData.expectedOutput && (
-            <div className="mt-4 text-sm text-gray-400">
-              <p>
-                💡 <strong>Expected Output:</strong> {levelData.expectedOutput}
-              </p>
+              <div className="text-2xl">{submissionResult.type === 'success' ? '✅' : '❌'}</div>
+              <div className="flex-1">
+                <p className="font-medium">{submissionResult.message}</p>
+              </div>
             </div>
           )}
         </div>
+
         {levelData.hints && levelData.hints.length > 0 && (
           <div className="mt-6 text-slate-600">
             <p className="text-lg font-semibold">💡 Hints:</p>
@@ -267,6 +298,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             </ul>
           </div>
         )}
+
         {levelData.links && levelData.links.length > 0 && (
           <div className="mt-6">
             <p className="text-lg font-semibold">📚 Helpful Resources:</p>
@@ -285,8 +317,9 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             </div>
           </div>
         )}
-        <ChatProvider />{' '}
-      </div>{' '}
+
+        <ChatProvider />
+      </div>
     </section>
   );
 };

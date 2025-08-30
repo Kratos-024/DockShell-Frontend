@@ -1,5 +1,13 @@
 import type { ctfResponse, levelPorgressResponse, LevelResponse } from '../assets/types';
+export class ApiError extends Error {
+  public readonly statusCode: number;
 
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.statusCode = statusCode;
+  }
+}
 export class LevelService {
   private baseUrl: string;
 
@@ -54,22 +62,23 @@ export class LevelService {
       return { error: 'Unknown error occurred' };
     }
   }
-  public async saveCtfLevel(
-    ctfName: string | undefined,
+  public async submitCtfFlag(
+    ctfName: string, // ctfName should not be undefined if it's required
     ctfLevel: number,
     password: string,
-  ): Promise<LevelResponse | { error: string }> {
+  ): Promise<{ success: true; message: string; data: unknown }> {
     const url = `${this.baseUrl}/api/v1/ctf/saveLevelProgress`;
 
-    const token = localStorage.getItem('accessToken') || '';
+    const token = localStorage.getItem('accessToken');
     if (!token) {
-      return { error: 'No authentication token found. Please login.' };
+      // Throw an error that can be caught by the UI handler
+      throw new ApiError('No authentication token found. Please log in.', 401);
     }
 
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: this.getHeaders(),
+        headers: this.getHeaders(), // Assuming this correctly adds the Authorization header
         body: JSON.stringify({
           ctfName,
           levelNo: ctfLevel,
@@ -77,26 +86,28 @@ export class LevelService {
         }),
       });
 
-      if (response.status === 401) {
-        return {
-          error: 'Authentication expired or invalid. Please login again.',
-        };
-      }
-
+      // If the response is not OK (e.g., 400, 403, 500), parse the error body
       if (!response.ok) {
-        return {
-          error: `Server error: ${response.status} ${response.statusText}`,
-        };
+        const errorData = await response.json().catch(() => ({
+          // Fallback if the error response isn't valid JSON
+          error: `Server returned an error: ${response.status} ${response.statusText}`,
+        }));
+        // Throw the structured error with the message from the server
+        throw new ApiError(errorData.error || 'An unknown server error occurred.', response.status);
       }
-      const data: LevelResponse = await response.json();
-      console.log(data);
 
-      return data;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        return { error: `Network or fetch error: ${error.message}` };
+      // If successful, the server sends a success object
+      return await response.json();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
       }
-      return { error: 'Unknown error occurred' };
+      // If it's a network error or something else, wrap it in a generic error message
+      if (error instanceof Error) {
+        throw new Error(`Network request failed: ${error.message}`);
+      }
+      // Fallback for unknown errors
+      throw new Error('An unknown error occurred during the request.');
     }
   }
   public async getAllUserProgress(): Promise<
