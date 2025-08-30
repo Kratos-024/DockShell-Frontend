@@ -21,6 +21,12 @@ const skeletonLevelData: LevelData = {
   difficulty: 'beginner',
   category: 'fileexploration',
   estimatedTime: 0,
+  credentials: {
+    username: '',
+    host: '',
+    Port: 0,
+    password: '',
+  },
   createdAt: new Date(),
 };
 export const CtfPage = ({ menuHandler, menu }: { menu: boolean; menuHandler: () => void }) => {

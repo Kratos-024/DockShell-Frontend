@@ -41,6 +41,12 @@ interface FileData {
 }
 
 export interface LevelData {
+  credentials?: {
+    username: string;
+    host: string;
+    Port: number;
+    password: string;
+  };
   ctfName: string;
   levelNo: number;
   id: string;
