@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { BioUpdateResponse } from '../assets/contstant';
 import type {
   CreateAccountPayload,
@@ -58,24 +59,28 @@ export class UserServices {
     this.baseUrl = baseUrl;
   }
 
-  private getAuthHeaders(isFormData: boolean = false): HeadersInit {
-    const token = localStorage.getItem('accessToken');
-    const headers: HeadersInit = {};
+  private getHeaders(isFormData: boolean = false, includeAuth: boolean = true): HeadersInit {
+    const headers: HeadersInit = {
+      'ngrok-skip-browser-warning': 'true',
+      'User-Agent': 'MyApp/1.0',
+    };
+
     if (!isFormData) {
       headers['Content-Type'] = 'application/json';
     }
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+
+    if (includeAuth) {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
     }
+
     return headers;
   }
 
   private getPublicHeaders(): HeadersInit {
-    return {
-      'ngrok-skip-browser-warning': 'true',
-      'User-Agent': 'MyApp/1.0',
-      'Content-Type': 'application/json',
-    };
+    return this.getHeaders(false, false);
   }
 
   public async createAccount(
@@ -89,16 +94,21 @@ export class UserServices {
   }
 
   public async validateSession(): Promise<ServiceResponse<ValidationPayload>> {
+    console.log(' Validating session with ngrok headers...');
+
     const response = await handleApiRequest<ValidationPayload>(
       `${this.baseUrl}/api/v1/user/validate`,
       {
         method: 'GET',
-        headers: this.getAuthHeaders(),
+        headers: this.getHeaders(false, true), // Include both ngrok and auth headers
       },
     );
 
     if (response.error) {
+      console.log(' Session validation failed:', response.error);
       localStorage.removeItem('accessToken');
+    } else {
+      console.log('✅ Session validation successful');
     }
 
     return response;
@@ -118,11 +128,10 @@ export class UserServices {
 
     return handleApiRequest(`${this.baseUrl}/api/v1/user/addImage`, {
       method: 'POST',
-      headers: this.getAuthHeaders(true), // Indicate FormData is used
+      headers: this.getHeaders(true, true),
       body: formData,
     });
   }
-
   public async logoutUser(): Promise<void> {
     const token = localStorage.getItem('accessToken');
 
@@ -133,6 +142,8 @@ export class UserServices {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
+            'ngrok-skip-browser-warning': 'true',
+            'User-Agent': 'MyApp/1.0',
           },
         });
       } catch (error) {
@@ -143,11 +154,18 @@ export class UserServices {
     localStorage.removeItem('accessToken');
     window.location.reload();
   }
+
   public async updateBio(bio: string | undefined): Promise<ServiceResponse<BioUpdateResponse>> {
     return handleApiRequest(`${this.baseUrl}/api/v1/user/updateBio`, {
       method: 'PUT',
-      headers: this.getAuthHeaders(),
+      headers: this.getHeaders(false, true),
       body: JSON.stringify({ bio }),
+    });
+  }
+  public async getCtfData(): Promise<ServiceResponse<any>> {
+    return handleApiRequest(`${this.baseUrl}/api/v1/ctf/getCtf`, {
+      method: 'GET',
+      headers: this.getHeaders(false, false),
     });
   }
 }

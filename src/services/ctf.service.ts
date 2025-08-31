@@ -1,4 +1,5 @@
 import type { ctfResponse, levelPorgressResponse, LevelResponse } from '../assets/types';
+
 export class ApiError extends Error {
   public readonly statusCode: number;
 
@@ -8,6 +9,7 @@ export class ApiError extends Error {
     this.statusCode = statusCode;
   }
 }
+
 export class LevelService {
   private baseUrl: string;
 
@@ -15,14 +17,26 @@ export class LevelService {
     this.baseUrl = baseUrl;
   }
 
-  private getHeaders(): HeadersInit {
-    const token = localStorage.getItem('accessToken') || 'cd';
-    return {
+  // 🔧 FIXED: Proper headers method with ngrok bypass
+  private getHeaders(includeAuth: boolean = true, isFormData: boolean = false): HeadersInit {
+    const headers: HeadersInit = {
+      // 🚀 ALWAYS include ngrok bypass headers
       'ngrok-skip-browser-warning': 'true',
       'User-Agent': 'MyApp/1.0',
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
+
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    if (includeAuth) {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+
+    return headers;
   }
 
   public async getCtfLevel(
@@ -32,7 +46,7 @@ export class LevelService {
     const uniqueId = `${ctfName}-${ctfLevel}`;
     const url = `${this.baseUrl}/api/v1/ctf/getctfLevel/${uniqueId}`;
 
-    const token = localStorage.getItem('accessToken') || 'cd';
+    const token = localStorage.getItem('accessToken');
     if (!token) {
       return { error: 'No authentication token found. Please login.' };
     }
@@ -40,7 +54,7 @@ export class LevelService {
     try {
       const response = await fetch(url, {
         method: 'GET',
-        headers: this.getHeaders(),
+        headers: this.getHeaders(true), // Include auth + ngrok headers
       });
 
       if (response.status === 401) {
@@ -64,8 +78,9 @@ export class LevelService {
       return { error: 'Unknown error occurred' };
     }
   }
+
   public async submitCtfFlag(
-    ctfName: string, // ctfName should not be undefined if it's required
+    ctfName: string,
     ctfLevel: number,
     password: string,
   ): Promise<{ success: true; message: string; data: unknown }> {
@@ -73,14 +88,13 @@ export class LevelService {
 
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      // Throw an error that can be caught by the UI handler
       throw new ApiError('No authentication token found. Please log in.', 401);
     }
 
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: this.getHeaders(), // Assuming this correctly adds the Authorization header
+        headers: this.getHeaders(true), // Include auth + ngrok headers
         body: JSON.stringify({
           ctfName,
           levelNo: ctfLevel,
@@ -88,30 +102,25 @@ export class LevelService {
         }),
       });
 
-      // If the response is not OK (e.g., 400, 403, 500), parse the error body
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({
-          // Fallback if the error response isn't valid JSON
           error: `Server returned an error: ${response.status} ${response.statusText}`,
         }));
-        // Throw the structured error with the message from the server
         throw new ApiError(errorData.error || 'An unknown server error occurred.', response.status);
       }
 
-      // If successful, the server sends a success object
       return await response.json();
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
       }
-      // If it's a network error or something else, wrap it in a generic error message
       if (error instanceof Error) {
         throw new Error(`Network request failed: ${error.message}`);
       }
-      // Fallback for unknown errors
       throw new Error('An unknown error occurred during the request.');
     }
   }
+
   public async getAllUserProgress(): Promise<
     | {
         success: true;
@@ -131,7 +140,7 @@ export class LevelService {
   > {
     const url = `${this.baseUrl}/api/v1/ctf/getAllUserProgress/`;
 
-    const token = localStorage.getItem('accessToken') || '';
+    const token = localStorage.getItem('accessToken');
     if (!token) {
       return {
         success: false,
@@ -142,7 +151,7 @@ export class LevelService {
     try {
       const response = await fetch(url, {
         method: 'GET',
-        headers: this.getHeaders(),
+        headers: this.getHeaders(true), // Include auth + ngrok headers
       });
 
       if (response.status === 401) {
@@ -184,15 +193,15 @@ export class LevelService {
       return { success: false, error: 'Unknown error occurred' };
     }
   }
+
+  // 🔧 FIXED: getCtf method with proper headers
   public async getCtf(): Promise<ctfResponse | { error: string }> {
     const url = `${this.baseUrl}/api/v1/ctf/getCtf`;
 
     try {
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application-json',
-        },
+        headers: this.getHeaders(false), // 🚀 Use proper headers with ngrok bypass
       });
 
       if (response.status === 401) {
@@ -206,9 +215,9 @@ export class LevelService {
           error: `Server error: ${response.status} ${response.statusText}`,
         };
       }
-      const data: ctfResponse = await response.json();
-      console.log(data);
 
+      const data: ctfResponse = await response.json();
+      console.log('✅ CTF Data received:', data);
       return data;
     } catch (error: unknown) {
       if (error instanceof Error) {
