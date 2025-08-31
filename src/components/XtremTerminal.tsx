@@ -44,7 +44,7 @@ export const WebTerminal = () => {
     terminalInstance.current = terminal;
     terminal.open(terminalRef.current);
 
-    const socket = new WebSocket('ws://localhost:8080');
+    const socket = new WebSocket('wss://cbcc52a527d8.ngrok-free.app');
     socketRef.current = socket;
 
     socket.addEventListener('open', () => {

@@ -28,7 +28,6 @@ export const NavBar = ({
       const response = await UserServicesInstance.validateSession();
 
       if (response.error) {
-        console.error('Session validation failed:', response.error);
         setAuthState('unauthenticated');
         return;
       }

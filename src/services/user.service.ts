@@ -72,6 +72,8 @@ export class UserServices {
 
   private getPublicHeaders(): HeadersInit {
     return {
+      'ngrok-skip-browser-warning': 'true',
+      'User-Agent': 'MyApp/1.0',
       'Content-Type': 'application/json',
     };
   }

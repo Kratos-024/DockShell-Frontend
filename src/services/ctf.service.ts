@@ -18,6 +18,8 @@ export class LevelService {
   private getHeaders(): HeadersInit {
     const token = localStorage.getItem('accessToken') || 'cd';
     return {
+      'ngrok-skip-browser-warning': 'true',
+      'User-Agent': 'MyApp/1.0',
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };

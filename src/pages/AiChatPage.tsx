@@ -13,7 +13,7 @@ export const ChatProvider = () => {
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://localhost:8080');
+    ws.current = new WebSocket('wss://cbcc52a527d8.ngrok-free.app');
     ws.current.onopen = () => console.log('WebSocket Connected');
     ws.current.onclose = () => console.log('WebSocket Disconnected');
     ws.current.onmessage = (event) => {
