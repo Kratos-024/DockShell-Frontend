@@ -54,7 +54,7 @@ async function handleApiRequest<T>(url: string, options: RequestInit): Promise<S
 export class UserServices {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'http://localhost:8080') {
+  constructor(baseUrl: string = 'https://cbcc52a527d8.ngrok-free.app') {
     this.baseUrl = baseUrl;
   }
 
