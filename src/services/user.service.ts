@@ -1,140 +1,116 @@
-// Assuming you have a types file at ../assets/types.ts
 import type {
   CreateAccountPayload,
   UserCreateResponse,
-  ServiceError,
   LoginPayload,
   UserLoginResponse,
-  ValidateSessionResponse,
-} from "../assets/types";
+  ValidationPayload,
+} from '../assets/types';
+interface ServiceSuccess<T> {
+  data: T;
+  message: string;
+  error?: never;
+}
 
+interface ServiceError {
+  data?: never;
+  message?: never;
+  error: string;
+}
+
+type ServiceResponse<T> = ServiceSuccess<T> | ServiceError;
+
+async function handleApiRequest<T>(url: string, options: RequestInit): Promise<ServiceResponse<T>> {
+  try {
+    const response = await fetch(url, options);
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      const errorMessage =
+        responseData.message ||
+        responseData.error ||
+        `Request failed with status ${response.status}`;
+      return { error: errorMessage };
+    }
+
+    if (responseData.data?.token) {
+      localStorage.setItem('accessToken', responseData.data.token);
+    }
+
+    return {
+      data: responseData.data,
+      message: responseData.message,
+    };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return { error: `Network error: ${error.message}` };
+    }
+    return { error: 'An unknown error occurred.' };
+  }
+}
 export class UserServices {
   private baseUrl: string;
 
-  constructor(baseUrl: string = "http://localhost:8080") {
+  constructor(baseUrl: string = 'http://localhost:8080') {
     this.baseUrl = baseUrl;
   }
   private getAuthHeaders(): HeadersInit {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem('accessToken');
     return {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
   private getPublicHeaders(): HeadersInit {
     return {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     };
   }
 
   public async createAccount(
-    userData: CreateAccountPayload
-  ): Promise<UserCreateResponse | ServiceError> {
-    const url = `${this.baseUrl}/api/v1/user/createAccount`;
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: this.getPublicHeaders(),
-        body: JSON.stringify(userData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorMessage =
-          (typeof data.error === "object"
-            ? JSON.stringify(data.error)
-            : data.error) ||
-          `Server error: ${response.status} ${response.statusText}`;
-        return { error: errorMessage };
-      }
-
-      if (data.data?.token) {
-        localStorage.setItem("accessToken", data.data.token);
-      }
-
-      return data as UserCreateResponse;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        return { error: `Network or fetch error: ${error.message}` };
-      }
-      return { error: "An unknown error occurred" };
-    }
+    userData: CreateAccountPayload,
+  ): Promise<ServiceResponse<UserCreateResponse>> {
+    return handleApiRequest(`${this.baseUrl}/api/v1/user/createAccount`, {
+      method: 'POST',
+      headers: this.getPublicHeaders(),
+      body: JSON.stringify(userData),
+    });
   }
-  public async validateSession(): Promise<
-    ValidateSessionResponse | ServiceError
-  > {
-    const url = `${this.baseUrl}/api/v1/user/validate`;
 
-    try {
-      const response = await fetch(url, {
-        method: "GET",
+  public async validateSession(): Promise<ServiceResponse<ValidationPayload>> {
+    const response = await handleApiRequest<ValidationPayload>(
+      `${this.baseUrl}/api/v1/user/validate`,
+      {
+        method: 'GET',
         headers: this.getAuthHeaders(),
-      });
+      },
+    );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          localStorage.removeItem("accessToken");
-        }
-        return {
-          error:
-            data.error || `Session validation failed: ${response.statusText}`,
-        };
-      }
-
-      return data as ValidateSessionResponse;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        return { error: `Network or fetch error: ${error.message}` };
-      }
-      return { error: "An unknown error occurred during session validation" };
+    if (response.error) {
+      localStorage.removeItem('accessToken');
     }
+
+    return response;
   }
-  public async loginUser(
-    credentials: LoginPayload
-  ): Promise<UserLoginResponse | ServiceError> {
-    const url = `${this.baseUrl}/api/v1/user/login`;
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: this.getPublicHeaders(),
-        body: JSON.stringify(credentials),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorMessage =
-          data.error ||
-          `Server error: ${response.status} ${response.statusText}`;
-        return { error: errorMessage };
-      }
-
-      if (data.data?.token) {
-        localStorage.setItem("accessToken", data.data.token);
-      }
-
-      return data as UserLoginResponse;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        return { error: `Network or fetch error: ${error.message}` };
-      }
-      return { error: "An unknown error occurred" };
-    }
+  public async loginUser(credentials: LoginPayload): Promise<ServiceResponse<UserLoginResponse>> {
+    return handleApiRequest(`${this.baseUrl}/api/v1/user/login`, {
+      method: 'POST',
+      headers: this.getPublicHeaders(),
+      body: JSON.stringify(credentials),
+    });
   }
 
   public logoutUser(): void {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem('accessToken');
     if (token) {
-      // Optional: Call a backend endpoint to invalidate the token in the DB
-      // e.g., fetch(`${this.baseUrl}/api/v1/user/logout`, { method: 'POST', headers: this.getAuthHeaders() });
+      // Optional: You could call a backend endpoint here to invalidate the token server-side.
+      // This is useful for security if you want to ensure the token cannot be used again,
+      // even if it was compromised before it expired.
+      // fetch(`${this.baseUrl}/api/v1/user/logout`, { method: 'POST', headers: this.getAuthHeaders() });
     }
-    localStorage.removeItem("accessToken");
-    console.log("User logged out and token removed.");
+    localStorage.removeItem('accessToken');
+    console.log('User logged out and token removed.');
+    // To reflect logout immediately, you might want to redirect or reload the page
+    // window.location.reload();
   }
 }
 

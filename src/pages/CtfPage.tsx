@@ -54,18 +54,23 @@ export const CtfPage = ({ menuHandler, menu }: { menu: boolean; menuHandler: () 
     <motion.section
       initial={{ marginLeft: 0 }}
       animate={{
-        marginLeft: menu ? '280px' : '0px',
-        width: menu ? 'calc(100% - 280px)' : '100%',
+        marginLeft: menu ? '220px' : '0px',
+        width: menu ? 'calc(100% - 220px)' : '100%',
       }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="min-h-screen  relative z-10"
+      className="min-h-screen  relative z-10 "
       style={{
         paddingLeft: '0',
         paddingRight: '0',
       }}
     >
-      <NavBar menu={menu} menuHandler={menuHandler} />
-      <div className="px-3">
+      <NavBar
+        menu={menu}
+        menuHandler={menuHandler}
+        isModalOpen={false}
+        handleLoginClick={function (): void {}}
+      />
+      <div className="">
         <CtfMenu totalLevels={totalLevels} menuHandler={menuHandler} menu={menu} />
         <CtfBody levelData={levelDetails} nextLevelNumber={+{ ctfLevel } + 1} />
         <Footer />

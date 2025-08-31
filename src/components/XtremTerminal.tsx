@@ -33,7 +33,7 @@ export const WebTerminal = () => {
         brightCyan: '#46d9ff',
         brightWhite: '#dfdfdf',
       },
-      fontSize: 13,
+      fontSize: 18,
       fontFamily:
         "SF Mono, Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
       rows: 35,
@@ -69,14 +69,11 @@ export const WebTerminal = () => {
       terminal.writeln('\r\nzsh: connection lost');
     });
 
-    // Send ALL keystrokes directly to backend - no local processing
     terminal.onData((data) => {
       if (socket.readyState === WebSocket.OPEN) {
-        // Check if it's a special SSH connection message
         if (data.startsWith('{') && data.includes('connect-ssh')) {
           socket.send(data);
         } else {
-          // Send raw keystroke data to backend
           socket.send(JSON.stringify({ type: 'keystroke', data: data }));
         }
       }

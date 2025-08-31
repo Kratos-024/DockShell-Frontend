@@ -19,6 +19,15 @@ export interface ValidateSessionResponse {
     user: UserData;
   };
 }
+export interface ValidationPayload {
+  user: UserData;
+}
+
+export interface ApiValidateSessionResponse {
+  statusCode: 200;
+  message: string;
+  data: ValidationPayload;
+}
 export default interface LabInter {
   ctfName: string;
   totalLevels: number;

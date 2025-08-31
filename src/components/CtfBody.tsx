@@ -6,25 +6,18 @@ import { ChatProvider } from '../pages/AiChatPage';
 import type { LevelData } from '../assets/types';
 import LevelServiceInstance, { ApiError } from '../services/ctf.service';
 
-// --- TYPE DEFINITIONS ---
 type Difficulty = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 type Category = 'fileexploration' | 'crypto' | 'web' | 'binary' | 'forensics' | 'network';
 
 interface CtfBodyProps {
-  // levelData can be null or undefined while the parent component is loading it.
   levelData?: LevelData | null;
   nextLevelNumber?: number;
 }
-
-// --- A reusable Skeleton Loader Component ---
-// This provides a better user experience than a simple spinner by showing a placeholder layout.
 const SkeletonLoader = ({ className }: { className?: string }) => (
   <div className={`bg-gray-700 animate-pulse rounded-md ${className}`} />
 );
 
-// --- THE MAIN COMPONENT ---
 export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
-  // --- STATE MANAGEMENT ---
   const [flagInput, setFlagInput] = useState('');
   const [submissionResult, setSubmissionResult] = useState<{
     type: 'success' | 'error' | null;
@@ -33,7 +26,6 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [credentials, setCredentials] = useState<LevelData['credentials'] | null>(null);
   useEffect(() => {
-    // This effect runs when levelData changes, updating credentials safely.
     if (levelData?.credentials) {
       setCredentials(levelData.credentials);
     }
@@ -118,7 +110,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
     try {
       const text = await navigator.clipboard.readText();
       setFlagInput(text);
-      toast.info('📋 Text pasted from clipboard');
+      toast.info('Text pasted from clipboard');
     } catch (error) {
       console.error('Failed to read clipboard:', error);
       toast.error('Failed to read from clipboard.');
@@ -160,7 +152,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
   };
 
   return (
-    <section className="px-4 py-5">
+    <section className="px-4 py-5 bg-black/20">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-4xl font-bold">
           {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}{' '}
@@ -183,14 +175,14 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
       <div className="py-3 mt-5">
         <div className="py-6">
-          <p className="text-xl text-slate-500">🎯 Level Goal</p>
+          <p className="text-xl text-slate-500">Level Goal</p>
           <p className="text-lg">{levelData.goal}</p>
           <p className="text-base text-gray-600 mt-2">{levelData.description}</p>
         </div>
 
         {credentials && (
-          <div className="bg-slate-900 text-white p-4 rounded-xl shadow-md">
-            <p className="text-lg font-semibold">🔑 Credentials</p>
+          <div className=" text-white p-4 -xl ">
+            <p className="text-lg font-semibold"> Credentials</p>
             <ul className="mt-2 space-y-1">
               <li>
                 <span className="font-bold">Host:</span> {credentials.host}
@@ -210,7 +202,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
         {+levelNumber === 0 && credentials && (
           <div className="mt-6">
-            <p className="text-lg font-semibold">💻 Connect with SSH:</p>
+            <p className="text-lg font-semibold"> Connect with SSH:</p>
             <pre className="bg-slate-800 text-green-400 p-3 rounded-lg mt-2 overflow-x-auto">
               ssh {username}@{credentials.host} -p {credentials.Port}
             </pre>
@@ -219,10 +211,10 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
         {levelData.commands && levelData.commands.length > 0 && (
           <div className="mt-6">
-            <p className="text-lg font-semibold">🛠️ Useful Commands:</p>
-            <div className="flex flex-wrap gap-3 mt-3">
+            <p className="text-lg font-semibold"> Useful Commands:</p>
+            <div className="flex flex-wrap gap-2 mt-3">
               {levelData.commands.map((command, index) => (
-                <div key={index} className="bg-slate-800 text-green-400 p-3 rounded-lg">
+                <div key={index} className="p-1 rounded-lg">
                   <code>{command}</code>
                 </div>
               ))}
@@ -230,9 +222,9 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
           </div>
         )}
 
-        <div className="mt-8 p-6 bg-gray-800 rounded-xl border border-gray-600">
+        <div className="mt-8 p-6 rounded-xl ">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">🚩 Submit Flag</h3>
+            <h3 className="text-xl font-bold text-white"> Submit Flag</h3>
             <span className="text-sm text-gray-400">
               Level {levelNumber} → Level {nextLevel}
             </span>
@@ -251,15 +243,19 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             <button
               onClick={pasteFromClipboard}
               disabled={isSubmitting}
-              className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
+              className="px-4 py-3 bg-slate-400 hover:opacity-90 cursor-pointer disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
               title="Paste from clipboard"
             >
-              📋 <span className="hidden sm:inline">Paste</span>
+              <span className="hidden sm:inline">Paste</span>
             </button>
             <button
               onClick={handleFlagSubmit}
               disabled={isSubmitting}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+              className="px-6 py-3 bg-[#bbff34] 
+               hover:bg-[#97d41b]  cursor-pointer
+                 disabled:cursor-not-allowed text-black
+                  rounded-lg font-medium transition-colors
+                   flex items-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -267,7 +263,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
                   <span>Submitting...</span>
                 </>
               ) : (
-                <>🚀 Submit</>
+                <> Submit</>
               )}
             </button>
           </div>
@@ -290,7 +286,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
         {levelData.hints && levelData.hints.length > 0 && (
           <div className="mt-6 text-slate-600">
-            <p className="text-lg font-semibold">💡 Hints:</p>
+            <p className="text-lg font-semibold"> Hints:</p>
             <ul className="list-disc list-inside space-y-1">
               {levelData.hints.map((hint, index) => (
                 <li key={index}>{hint}</li>
@@ -301,7 +297,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
         {levelData.links && levelData.links.length > 0 && (
           <div className="mt-6">
-            <p className="text-lg font-semibold">📚 Helpful Resources:</p>
+            <p className="text-lg font-semibold">Helpful Resources:</p>
             <div className="mt-2 space-y-2">
               {levelData.links.map((link, index) => (
                 <a
@@ -311,7 +307,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
                   rel="noopener noreferrer"
                   className="block text-blue-400 hover:text-blue-300 underline"
                 >
-                  📖 Resource {index + 1}
+                  Resource {index + 1}
                 </a>
               ))}
             </div>

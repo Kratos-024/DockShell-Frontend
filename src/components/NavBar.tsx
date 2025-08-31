@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { CiMenuFries } from "react-icons/ci";
-import { FaUserCircle, FaUser, FaSignOutAlt } from "react-icons/fa"; // Import new icons
-import { CreateAccountModal } from "./CreateAccountModal";
-import UserServicesInstance from "../services/user.service";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { CiMenuFries } from 'react-icons/ci';
+import { FaUserCircle, FaUser, FaSignOutAlt } from 'react-icons/fa'; // Import new icons
+import { CreateAccountModal } from './CreateAccountModal';
+import UserServicesInstance from '../services/user.service';
+import { useNavigate } from 'react-router-dom';
 
-type AuthState = "loading" | "authenticated" | "unauthenticated";
+type AuthState = 'loading' | 'authenticated' | 'unauthenticated';
 
 export const NavBar = ({
   menuHandler,
@@ -18,61 +18,59 @@ export const NavBar = ({
   menuHandler?: () => void;
   handleLoginClick: () => void;
 }) => {
-  const [authState, setAuthState] = useState<AuthState>("loading");
+  const [authState, setAuthState] = useState<AuthState>('loading');
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     const checkUserSession = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        setAuthState("unauthenticated");
+      const response = await UserServicesInstance.validateSession();
+
+      if (response.error) {
+        console.error('Session validation failed:', response.error);
+        setAuthState('unauthenticated');
         return;
       }
-      const response = await UserServicesInstance.validateSession();
-      if ("data" in response && response.data.user) {
-        setAuthState("authenticated");
+
+      if (response.data?.user) {
+        setAuthState('authenticated');
       } else {
-        setAuthState("unauthenticated");
+        console.warn('Session is valid but no user data was returned.');
+        setAuthState('unauthenticated');
       }
     };
+
     checkUserSession();
   }, []);
 
-  // const handleLoginClick = () => {
-  //   setIsModalOpen(!isModalOpen);
-  // };
-
   const closeModal = () => {
     handleLoginClick();
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem('accessToken');
     if (token) {
-      setAuthState("authenticated");
+      setAuthState('authenticated');
     }
   };
 
   const handleLogout = async () => {
     setIsLoading(true);
-    localStorage.removeItem("accessToken");
-    setAuthState("unauthenticated");
+    localStorage.removeItem('accessToken');
+    setAuthState('unauthenticated');
     setIsUserMenuOpen(false);
     setIsLoading(false);
   };
 
   const handleMyProfile = () => {
-    navigate("/p/profile");
-    console.log("Navigating to profile...");
+    navigate('/p/profile');
+    window.location.reload();
     setIsUserMenuOpen(false);
   };
 
   const AuthSection = () => {
     switch (authState) {
-      case "loading":
-        return (
-          <div className="h-9 w-24 animate-pulse rounded-md bg-gray-700"></div>
-        );
+      case 'loading':
+        return <div className="h-9 w-24 animate-pulse rounded-md bg-gray-700"></div>;
 
-      case "authenticated":
+      case 'authenticated':
         return (
           <div className="relative">
             <FaUserCircle
@@ -82,7 +80,7 @@ export const NavBar = ({
             />
             {isUserMenuOpen && (
               <div
-                className="absolute right-0 mt-2 w-56
+                className="absolute right-0 mt-2 w-[196px]
                rounded-xl  bg-[#232e31] p-2 shadow-lg ring-1
                 ring-white/10 z-50"
               >
@@ -90,10 +88,13 @@ export const NavBar = ({
                   <button
                     onClick={handleMyProfile}
                     className="w-full flex items-center 
-                    justify-center gap-3 px-4 sm:px-6 md:px-4 
-                    lg:px-6 py-3 sm:py-4 md:py-3 lg:py-4 
+                    justify-center gap-3 
+                    py-3 
                      bg-[#bbff34] text-black 
-                      font-bold text-base sm:text-lg md:text-sm lg:text-base rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl min-h-[44px] sm:min-h-[48px] md:min-h-[44px]"
+                      font-bold text-base sm:text-lg
+                       md:text-sm lg:text-base rounded-xl  cursor-pointer
+                       transition-all duration-300 transform
+                     "
                   >
                     <FaUser className="w-4 h-4 sm:w-5 sm:h-5  text-black md:w-4 md:h-4" />
                     My Profile
@@ -101,16 +102,25 @@ export const NavBar = ({
                   <button
                     onClick={handleLogout}
                     disabled={isLoading}
-                    className={`w-full flex items-center justify-center gap-3 px-4 sm:px-6 md:px-4 lg:px-6 py-3 sm:py-4 md:py-3 lg:py-4 text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-lg sm:rounded-xl md:rounded-lg transition-all duration-200 min-h-[44px] sm:min-h-[48px] md:min-h-[44px] text-base sm:text-lg md:text-sm lg:text-base font-medium ${
-                      isLoading
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:scale-105 active:scale-95"
-                    }`}
+                    className={`w-full flex items-center 
+                      justify-center gap-3  
+                    py-3
+                      lg:py-4 text-gray-300 bg-gray-700
+                       hover:bg-gray-600 rounded-lg  cursor-pointer
+                   ${
+                     isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                   }`}
                   >
                     {isLoading ? (
-                      <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 md:h-4 md:w-4 border-b-2 border-gray-300" />
+                      <div
+                        className="animate-spin rounded-full 
+                      h-4 w-4 sm:h-5 sm:w-5 md:h-4 md:w-4 border-b-2 border-gray-300"
+                      />
                     ) : (
-                      <FaSignOutAlt className="w-4 h-4 sm:w-5 sm:h-5 md:w-4 md:h-4" />
+                      <FaSignOutAlt
+                        className="w-4 h-4 sm:w-5 
+                      sm:h-5 md:w-4 md:h-4"
+                      />
                     )}
                     Sign Out
                   </button>
@@ -120,7 +130,7 @@ export const NavBar = ({
           </div>
         );
 
-      case "unauthenticated":
+      case 'unauthenticated':
       default:
         return (
           <>
@@ -149,8 +159,10 @@ export const NavBar = ({
           dir="ltr"
           data-slot="navigation-menu"
           data-viewport="true"
-          className="group/navigation-menu max-w-[1480px] px] mx-auto relative gap-4 
-          flex max-xl:px-7 min-w-min  flex-1 items-center justify-center
+          className="group/navigation-menu px-9
+           mx-auto relative gap-4 
+          flex max-xl:px-7 min-w-min  flex-1 items-center 
+          justify-center
           "
         >
           <button onClick={menuHandler} className="cursor-pointer">
@@ -169,11 +181,10 @@ export const NavBar = ({
               <ul
                 data-orientation="horizontal"
                 data-slot="navigation-menu-list"
-                className="group flex-1 list-none items-center justify-center gap-1 hidden lg:flex"
+                className="group flex-1 list-none items-center 
+                justify-center gap-1 hidden lg:flex"
                 dir="ltr"
-              >
-                {/* ... Your other navigation list items ... */}
-              </ul>
+              ></ul>
             </div>
 
             <div className=" items-center gap-2 flex">

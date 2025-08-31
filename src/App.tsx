@@ -26,7 +26,10 @@ function App() {
             path="/"
             element={<HomePage handleLoginClick={handleLoginClick} isModalOpen={isModalOpen} />}
           />
-          <Route path="/ctf" element={<CtfsPage />} />
+          <Route
+            path="/ctf/labs"
+            element={<CtfsPage isModalOpen={isModalOpen} handleLoginClick={handleLoginClick} />}
+          />
           <Route path="/p/:username" element={<UserProfilePage />} />
         </Route>
 

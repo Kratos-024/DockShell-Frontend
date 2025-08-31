@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { FaTrophy } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { IoMdClose } from 'react-icons/io';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,14 +11,13 @@ export const CtfMenu = ({
   menu: boolean;
   menuHandler: () => void;
 }) => {
-  const [unlockedLevels] = useState(5);
-  const { ctfName } = useParams();
+  const { levelId, ctfName } = useParams<{ levelId: string; ctfName: string }>();
+  const currentLevel = levelId ? parseInt(levelId.replace('level', ''), 10) : null;
   const navigate = useNavigate();
   const handleLevelClick = (level: number) => {
     navigate(`/ctf/level${level}/${ctfName}`);
     window.location.reload();
   };
-
   const menuVariants = {
     hidden: { x: '-100%', opacity: 0 },
     visible: { x: 0, opacity: 1 },
@@ -34,14 +31,11 @@ export const CtfMenu = ({
     },
   };
 
-  // const levelVariants = {
-  //   hidden: { opacity: 0, scale: 0.8 },
-  //   visible: { opacity: 1, scale: 1 },
-  // };
   if (!totalLevels || !ctfName) {
-    return;
+    return null;
   }
-  const levels = Array.from({ length: totalLevels }, (_, i) => i);
+
+  const levels = Array.from({ length: totalLevels }, (_, i) => i + 1);
 
   return (
     <>
@@ -50,13 +44,16 @@ export const CtfMenu = ({
         initial="hidden"
         animate={menu ? 'visible' : 'hidden'}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="fixed bg-black/20 backdrop-blur-sm top-0 left-0 h-screen z-50
-          w-[240px] sm:w-[260px] md:w-[280px]
+        className="fixed bg-black/20 backdrop-blur-sm top-0
+         left-0 h-screen z-50
+          w-[210px] sm:w-[260px] md:w-[210px]
           shadow-2xl border-r border-gray-700"
       >
         <div className="w-[1px] bg-slate-700 right-0 absolute h-screen" />
-
-        <div className="w-full relative  h-full overflow-y-auto p-3 sm:p-4 md:p-6 pt-4 sm:pt-6 md:pt-8">
+        <div className="cursor-pointer z-50 absolute right-1 top-2" onClick={menuHandler}>
+          <IoMdClose className="w-[28px]  h-[28px] text-white hover:text-red-500 transition-colors" />
+        </div>
+        <div className="w-full relative mt-4 h-full overflow-y-auto p-3 sm:p-4 md:p-6 pt-4 sm:pt-6 md:pt-8">
           <motion.h2
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -66,10 +63,6 @@ export const CtfMenu = ({
           >
             <a href="/">{ctfName.charAt(0).toUpperCase() + ctfName.slice(1).toLowerCase()}</a>
           </motion.h2>
-
-          <div className=" cursor-pointer absolute right-5 top-5" onClick={menuHandler}>
-            <IoMdClose className="w-[28px] h-[28px] rotate-180 text-white" />
-          </div>
 
           <div className="flex flex-col items-center gap-4 sm:gap-6 text-gray-500 w-full">
             <div className="w-full max-w-[180px] sm:max-w-[190px] md:max-w-[196px] bg-slate-700 h-[1px]" />
@@ -81,50 +74,36 @@ export const CtfMenu = ({
               className="w-full max-w-[200px]"
             >
               <div className="flex items-center gap-2 mb-4 justify-center">
-                <FaTrophy className="text-yellow-500 w-4 h-4" />
                 <span className="text-center text-sm sm:text-base font-semibold text-gray-300">
-                  CTF Levels
+                  {ctfName} Levels
                 </span>
-              </div>
-
-              <div className="mb-4">
-                <div className="bg-gray-700 rounded-full h-2 mb-2">
-                  <div
-                    className="bg-green-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${(unlockedLevels / 40) * 100}%` }}
-                  />
-                </div>
-                <div className="text-xs text-gray-400 text-center">
-                  {unlockedLevels}/40 Unlocked
-                </div>
               </div>
 
               <motion.div
                 variants={listVariants}
                 initial="hidden"
                 animate={menu ? 'visible' : 'hidden'}
-                className="flex flex-col gap-2  
-                overflow-y-auto custom-scrollbar"
+                className="flex flex-col gap-2 overflow-y-auto custom-scrollbar"
               >
                 {levels.map((level) => {
-                  const isUnlocked = level <= unlockedLevels;
+                  const isSelected = level === currentLevel;
 
                   return (
                     <motion.button
                       key={level}
-                      onClick={() => {
-                        handleLevelClick(level);
-                      }}
-                      whileHover={isUnlocked ? { scale: 1.1 } : {}}
+                      onClick={() => handleLevelClick(level)}
+                      whileTap={{ scale: 0.95 }}
                       className={`
-                        relative p-2 rounded-lg cursor-pointer
-                         text-xs font-bold transition-all
-                     hover:opacity-90 hover:text-white       duration-200
-                        
-                       
+                        relative p-2 rounded-lg text-xs font-bold 
+                         duration-200 cursor-pointer
+                        ${
+                          isSelected
+                            ? '  bg-[#bbff34]  text-black shadow-lg'
+                            : 'bg-gray-600 text-black hover:bg-[#bbff34]  hover:text-black'
+                        }
                       `}
                     >
-                      {level}
+                      Level {level}
                     </motion.button>
                   );
                 })}

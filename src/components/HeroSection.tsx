@@ -1,28 +1,26 @@
-import { Shield, Lock, Globe, AlertTriangle } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import UserServicesInstance from "../services/user.service";
-type AuthState = "loading" | "authenticated" | "unauthenticated";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Shield, Lock, Globe, AlertTriangle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import UserServicesInstance from '../services/user.service';
+type AuthState = 'loading' | 'authenticated' | 'unauthenticated';
 
-export function HeroSection({
-  handleLoginClick,
-}: {
-  handleLoginClick: () => void | undefined;
-}) {
-  const [authState, setAuthState] = useState<AuthState>("loading");
+export function HeroSection({ handleLoginClick }: { handleLoginClick: () => void | undefined }) {
+  const [authState, setAuthState] = useState<AuthState>('loading');
 
   useEffect(() => {
     const checkUserSession = async () => {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem('accessToken');
       if (!token) {
-        setAuthState("unauthenticated");
+        setAuthState('unauthenticated');
         return;
       }
       const response = await UserServicesInstance.validateSession();
-      if ("data" in response && response.data.user) {
-        setAuthState("authenticated");
+      //@ts-ignore
+      if ('data' in response && response.data.user) {
+        setAuthState('authenticated');
       } else {
-        setAuthState("unauthenticated");
+        setAuthState('unauthenticated');
       }
     };
     checkUserSession();
@@ -30,13 +28,13 @@ export function HeroSection({
   const navigate = useNavigate();
   const handlerStartNow = async () => {
     try {
-      if (authState === "authenticated") {
-        navigate("/ctf");
+      if (authState === 'authenticated') {
+        navigate('/ctf');
       } else {
         handleLoginClick();
       }
     } catch (error) {
-      console.log("Error has been occured", error);
+      console.log('Error has been occured', error);
     }
   };
 
@@ -75,8 +73,8 @@ export function HeroSection({
                 className="text-xl font-mono 
               text-muted-foreground  leading-relaxed"
               >
-                Step into a gamified cybersecurity arena. Solve challenges,
-                capture the flag, and sharpen your skills.
+                Step into a gamified cybersecurity arena. Solve challenges, capture the flag, and
+                sharpen your skills.
               </p>
               <button
                 onClick={handlerStartNow}
@@ -113,18 +111,12 @@ export function HeroSection({
                     >
                       <div className="flex items-center space-x-1">
                         <span className="text-secondary">$</span>
-                        <span className="animate-pulse">
-                          nmap -sS target.ctf
-                        </span>
+                        <span className="animate-pulse">nmap -sS target.ctf</span>
                       </div>
-                      <div className="text-muted-foreground">
-                        Scanning ports...
-                      </div>
+                      <div className="text-muted-foreground">Scanning ports...</div>
                       <div className="text-primary">Port 22: OPEN</div>
                       <div className="text-primary">Port 80: OPEN</div>
-                      <div className="text-secondary animate-pulse">
-                        Exploiting...
-                      </div>
+                      <div className="text-secondary animate-pulse">Exploiting...</div>
                     </div>
                   </div>
 
@@ -137,42 +129,38 @@ export function HeroSection({
               <div className="absolute top-4 right-4 animate-bounce">
                 <div className="relative">
                   <div className="w-12 h-8 bg-gradient-to-r from-primary to-secondary glow-green rounded-sm flex items-center justify-center">
-                    <span className="text-xs font-mono font-bold text-background">
-                      CTF
-                    </span>
+                    <span className="text-xs font-mono font-bold text-background">CTF</span>
                   </div>
                   <div className="w-1 h-16 bg-muted-foreground absolute -bottom-16 left-1/2 transform -translate-x-1/2"></div>
                 </div>
               </div>
 
               <div className="absolute top-8 left-8 text-primary text-glow-green font-mono text-xs animate-pulse">
-                {"01101000"}
+                {'01101000'}
               </div>
               <div className="absolute bottom-12 left-12 text-secondary text-glow-purple font-mono text-xs animate-pulse delay-300">
-                {"0x41414141"}
+                {'0x41414141'}
               </div>
               <div className="absolute top-16 right-16 text-primary text-glow-green font-mono text-xs animate-pulse delay-700">
-                {"#!/bin/sh"}
+                {'#!/bin/sh'}
               </div>
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-card border border-primary glow-green rounded px-3 py-1">
                 <div className="font-mono text-xs text-primary animate-pulse">
-                  {"[FLAG_CAPTURED]"}
+                  {'[FLAG_CAPTURED]'}
                 </div>
               </div>
             </div>
 
             <div className="absolute -top-6 -right-6 bg-card border border-primary glow-green rounded-lg p-3 font-mono text-xs text-primary animate-float">
-              <div className="text-secondary mb-1">{"root@ctf:~#"}</div>
-              <div>{"whoami"}</div>
-              <div className="text-primary">{"elite_hacker"}</div>
+              <div className="text-secondary mb-1">{'root@ctf:~#'}</div>
+              <div>{'whoami'}</div>
+              <div className="text-primary">{'elite_hacker'}</div>
             </div>
 
             <div className="absolute -bottom-6 -left-6 bg-card border border-secondary rounded-lg p-3 font-mono text-xs text-secondary animate-float-delayed">
-              <div className="text-muted-foreground mb-1">
-                {"~/challenges$"}
-              </div>
-              <div>{"cat flag.txt"}</div>
-              <div className="text-secondary">{"CTF{h4ck3r_m0d3}"}</div>
+              <div className="text-muted-foreground mb-1">{'~/challenges$'}</div>
+              <div>{'cat flag.txt'}</div>
+              <div className="text-secondary">{'CTF{h4ck3r_m0d3}'}</div>
             </div>
 
             <div
@@ -181,8 +169,8 @@ export function HeroSection({
             glow- rounded-lg p-2 font-mono
              text-xs text-primary animate-float-slow"
             >
-              <div>{"SSH: Connected"}</div>
-              <div className="text-secondary">{"Access: ROOT"}</div>
+              <div>{'SSH: Connected'}</div>
+              <div className="text-secondary">{'Access: ROOT'}</div>
             </div>
           </div>
         </div>
