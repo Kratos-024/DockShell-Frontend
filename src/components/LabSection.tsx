@@ -1,18 +1,22 @@
 import { Link } from 'react-router-dom';
+
 import type LabInter from '../assets/types';
 
 const LabCard = ({ lab }: { lab: LabInter }) => {
+  const isDisabled = lab.ctfName === 'Blades of Chaos';
+
   return (
     <div
       data-slot="card"
-      className="text-card-foreground flex flex-col 
-      max-md:w-[310px] max-lg: mx-auto max-md:pb-3
-       gap-4 md:gap-6 rounded-xl border shadow-sm
-        group cursor-pointer transition-all
-         duration-300 hover:shadow-lg
-          hover:shadow-green-500/20 hover:-translate-y-1
-           border-green-800/30 hover:border-green-500/50
-            bg-gray-900/50 backdrop-blur-sm h-full"
+      className={`
+        text-card-foreground flex flex-col max-md:w-[310px] max-lg:mx-auto max-md:pb-3
+        gap-4 md:gap-6 rounded-xl border shadow-sm h-full bg-gray-900/50 backdrop-blur-sm
+        ${
+          isDisabled
+            ? 'cursor-not-allowed opacity-90'
+            : 'group cursor-pointer transition-all duration-300 hover:shadow-lg border-green-800/30 '
+        }
+      `}
     >
       <div
         data-slot="card-header"
@@ -22,7 +26,7 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
         <div className="relative overflow-hidden rounded-t-lg">
           <img
             alt={lab.title}
-            className="w-full h-32 sm:h-40 md:h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+            className={`w-full h-32 sm:h-40 md:h-48 object-cover ${!isDisabled && 'transition-transform duration-300 group-hover:scale-105'}`}
             loading="lazy"
             src={lab.imgSrc || undefined}
           />
@@ -33,10 +37,9 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
             >
               {lab.difficulty}
             </span>
-
             <span
               data-slot="badge"
-              className=" items-center justify-center rounded-md border px-1.5 sm:px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] transition-[color,box-shadow] overflow-hidden bg-gray-900/80 backdrop-blur-sm border-green-700/50 text-green-300 hidden sm:inline-flex"
+              className="capitalize items-center justify-center rounded-md border px-1.5 sm:px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] transition-[color,box-shadow] overflow-hidden bg-gray-900/80 backdrop-blur-sm border-green-700/50 text-green-300 hidden sm:inline-flex"
             >
               {lab.topic}
             </span>
@@ -46,14 +49,15 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
 
       <div data-slot="card-content" className="p-3 sm:p-4 md:p-6 flex-1 flex flex-col">
         <div className="space-y-2 md:space-y-3 flex-1">
-          <h3 className="font-semibold text-sm sm:text-base md:text-lg text-gray-100 group-hover:text-green-400 transition-colors line-clamp-2">
+          <h3
+            className={`capitalize font-semibold text-sm sm:text-base md:text-lg text-gray-100 ${!isDisabled && 'group-hover:text-green-400'} transition-colors line-clamp-2`}
+          >
             {lab.title}
           </h3>
           <p className="text-gray-400 text-xs sm:text-sm leading-relaxed line-clamp-2 md:line-clamp-3">
             {lab.subHeader}
           </p>
 
-          {/* Solved + CTA */}
           <div className="flex items-center justify-between pt-2 mt-auto">
             <div className="flex items-center gap-1.5 sm:gap-2 text-gray-400">
               <svg
@@ -75,8 +79,6 @@ const LabCard = ({ lab }: { lab: LabInter }) => {
               </svg>
               <span className="text-xs sm:text-sm font-medium">{lab.totalPlayers} solved</span>
             </div>
-            <div className="text-xs text-green-400 hidden sm:block">Click to explore →</div>
-            <div className="text-xs text-green-400 block sm:hidden">→</div>
           </div>
         </div>
       </div>

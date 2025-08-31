@@ -313,7 +313,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             </div>
           </div>
         )}
-
+        <div className="mt-9">Note: If Terminal doesn't working use either pc or termux</div>
         <ChatProvider />
       </div>
     </section>

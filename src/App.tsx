@@ -1,46 +1,56 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { HomePage } from './pages/HomePage';
-import { CtfsPage } from './pages/CtfsPage';
-import { CtfPage } from './pages/CtfPage';
 import { useState } from 'react';
-import { UserProfilePage } from './pages/UserProfilePage';
 import { MainLayout } from './MainLayout';
 import { FullscreenLayout } from './FullscreenLayout';
+import { CtfsPage } from './pages/LabsPage';
+import { CtfPage } from './pages/CtfPage';
+import { UserProfilePage } from './pages/UserProfilePage';
+
+import { AuthProvider } from './AuthContext';
+import { ProtectedRoute } from './security/ProtectedRoute';
+import { PrivateRoute } from './security/PrivateRoutes';
 
 function App() {
   const [menu, setMenu] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const menuHandler = () => {
     setMenu(!menu);
   };
   const handleLoginClick = () => {
     setIsModalOpen(!isModalOpen);
   };
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route
-            path="/"
-            element={<HomePage handleLoginClick={handleLoginClick} isModalOpen={isModalOpen} />}
-          />
-          <Route
-            path="/ctf/labs"
-            element={<CtfsPage isModalOpen={isModalOpen} handleLoginClick={handleLoginClick} />}
-          />
-          <Route path="/p/:username" element={<UserProfilePage />} />
-        </Route>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute handleLoginClick={handleLoginClick} isModalOpen={isModalOpen} />
+              }
+            />
+          </Route>
 
-        <Route element={<FullscreenLayout />}>
-          <Route
-            path="/ctf/:ctfLevel/:ctfName"
-            element={<CtfPage menuHandler={menuHandler} menu={menu} />}
-          />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          <Route element={<PrivateRoute />}>
+            <Route element={<MainLayout />}>
+              <Route
+                path="/ctf/labs"
+                element={<CtfsPage isModalOpen={isModalOpen} handleLoginClick={handleLoginClick} />}
+              />
+              <Route path="/p/:username" element={<UserProfilePage />} />
+            </Route>
+
+            <Route element={<FullscreenLayout />}>
+              <Route
+                path="/ctf/:ctfLevel/:ctfName"
+                element={<CtfPage menuHandler={menuHandler} menu={menu} />}
+              />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

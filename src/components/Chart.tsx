@@ -22,6 +22,9 @@ export interface Skill {
 
 export interface ChartProps {
   skills?: Skill[];
+  profileImage?: string;
+  username?: string;
+  bio?: string;
 }
 
 type DifficultyLevel = 'entry' | 'medium' | 'hard';

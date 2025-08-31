@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export const StatsSection = () => {
   return (
@@ -9,48 +9,34 @@ export const StatsSection = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-            Make your development team into security experts
+            Build a Hacker's Mindset, Not Just a Skill Set{' '}
           </h2>
           <p className="mt-6 text-lg leading-8 text-gray-300">
-            Have them hack real, vulnerable applications in the browser, then
-            see how the code can be made secure
+            Go beyond theory. Our platform challenges your team to think critically, solve complex
+            puzzles, and understand the "how" behind exploits in a hands-on, immersive terminal
+            experience.
           </p>
         </div>
 
         <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
+          <p className="whitespace-nowrap mb-2 hover:text-gray-300 transition-colors">
+            See the Labs we cover{' '}
+          </p>
           <div className="grid grid-cols-1 gap-x-8 gap-y-6 text-base font-semibold leading-7 text-white sm:grid-cols-2 md:flex lg:gap-x-10">
-            <a
-              href="/lessons"
-              className="whitespace-nowrap hover:text-gray-300 transition-colors"
-            >
-              See the vulnerabilities we cover{" "}
+            <a href="#" className="whitespace-nowrap hover:text-gray-300 transition-colors">
+              Learn Linux Commands{' '}
               <span className="inline" aria-hidden="true">
                 →
               </span>
             </a>
-            <a
-              href="/enterprise"
-              className="whitespace-nowrap hover:text-gray-300 transition-colors"
-            >
-              Learn how enterprise licensing works{" "}
+            <a href="#" className="whitespace-nowrap hover:text-gray-300 transition-colors">
+              Learning Networking tools like nmap
               <span className="inline" aria-hidden="true">
                 →
               </span>
             </a>
-            <a
-              href="/owasp"
-              className="whitespace-nowrap hover:text-gray-300 transition-colors"
-            >
-              Review the OWASP Top Ten{" "}
-              <span className="inline" aria-hidden="true">
-                →
-              </span>
-            </a>
-            <a
-              href="/pci"
-              className="whitespace-nowrap hover:text-gray-300 transition-colors"
-            >
-              Meet your compliance goals{" "}
+            <a href="#" className="whitespace-nowrap hover:text-gray-300 transition-colors">
+              Cryptography{' '}
               <span className="inline" aria-hidden="true">
                 →
               </span>
@@ -60,33 +46,11 @@ export const StatsSection = () => {
           <dl className="mt-16 grid grid-cols-1 gap-8 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4">
             <div className="flex flex-col-reverse">
               <dt className="text-base leading-7 text-gray-300">Users</dt>
-              <dd className="text-2xl font-bold leading-9 tracking-tight text-white">
-                523,000
-              </dd>
+              <dd className="text-2xl font-bold leading-9 tracking-tight text-white">100+</dd>
             </div>
             <div className="flex flex-col-reverse">
-              <dt className="text-base leading-7 text-gray-300">
-                Paying customers
-              </dt>
-              <dd className="text-2xl font-bold leading-9 tracking-tight text-white">
-                500+
-              </dd>
-            </div>
-            <div className="flex flex-col-reverse">
-              <dt className="text-base leading-7 text-gray-300">
-                Vulnerabilities covered in detail
-              </dt>
-              <dd className="text-2xl font-bold leading-9 tracking-tight text-white">
-                39
-              </dd>
-            </div>
-            <div className="flex flex-col-reverse">
-              <dt className="text-base leading-7 text-gray-300">
-                Security issues resolved
-              </dt>
-              <dd className="text-2xl font-bold leading-9 tracking-tight text-white">
-                10,000+
-              </dd>
+              <dt className="text-base leading-7 text-gray-300">Labs</dt>
+              <dd className="text-2xl font-bold leading-9 tracking-tight text-white">10+</dd>
             </div>
           </dl>
         </div>
@@ -123,17 +87,11 @@ export const StatsSection = () => {
         aria-hidden="true"
         style={
           {
-            mask: "radial-gradient(closest-side,white,transparent)",
+            mask: 'radial-gradient(closest-side,white,transparent)',
           } as React.CSSProperties
         }
       >
-        <circle
-          cx="512"
-          cy="512"
-          r="512"
-          fill="url(#hacker-gradient)"
-          fillOpacity="0.3"
-        />
+        <circle cx="512" cy="512" r="512" fill="url(#hacker-gradient)" fillOpacity="0.3" />
         <defs>
           <radialGradient id="hacker-gradient">
             <stop stopColor="#00ff41" />

@@ -56,20 +56,17 @@ export const NavBar = ({
     setIsLoading(true);
 
     try {
-      // 1. Attempt to log out from the server
       await UserServicesInstance.logoutUser();
-
-      // 2. If successful, show a success toast
       toast.success('You have been logged out successfully.');
     } catch (error) {
-      // 3. If the server call fails, log the error and show an error toast
-      console.error('Server logout failed, but proceeding with client-side cleanup.', error);
-      toast.error('Could not log out from the server, but your session has been cleared locally.');
+      console.error('Server logout failed, proceeding with client-side cleanup.', error);
+      toast.error('Server logout failed, but your session has been cleared locally.');
     } finally {
       localStorage.removeItem('accessToken');
       setAuthState('unauthenticated');
       setIsUserMenuOpen(false);
       setIsLoading(false);
+      navigate('/');
     }
   };
   const handleMyProfile = () => {
@@ -186,9 +183,22 @@ export const NavBar = ({
             )}
           </button>
           <div className="flex w-full items-center justify-between gap-12 py-4">
-            <h1 className="text-[28px]">
-              <a href="/">DockShell</a>
-            </h1>
+            <div className="flex gap-3 items-center">
+              {' '}
+              <a href="/" className="flex items-center space-x-2">
+                <img
+                  src="https://secure.gravatar.com/avatar/0a36713aa63972a957a0eb366e8b0194.jpg?s=200&d=robohash&r=x"
+                  alt="Logo"
+                  className="h-10 w-10 rounded-full border border-gray-300 shadow-sm"
+                />
+              </a>
+              <h1 className="text-[28px] ">
+                <a className="text-xl font-bold text-amber-600" href="/">
+                  <span className="text-[#9fef00]">Dock</span>
+                  <span className="text-gray-600">Shell</span>
+                </a>
+              </h1>
+            </div>
 
             <div>
               <ul

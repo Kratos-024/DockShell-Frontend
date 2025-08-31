@@ -1,10 +1,13 @@
+import type { BioUpdateResponse } from '../assets/contstant';
 import type {
   CreateAccountPayload,
   UserCreateResponse,
   LoginPayload,
   UserLoginResponse,
   ValidationPayload,
+  ImageUploadResponse,
 } from '../assets/types';
+
 interface ServiceSuccess<T> {
   data: T;
   message: string;
@@ -47,19 +50,26 @@ async function handleApiRequest<T>(url: string, options: RequestInit): Promise<S
     return { error: 'An unknown error occurred.' };
   }
 }
+
 export class UserServices {
   private baseUrl: string;
 
   constructor(baseUrl: string = 'http://localhost:8080') {
     this.baseUrl = baseUrl;
   }
-  private getAuthHeaders(): HeadersInit {
+
+  private getAuthHeaders(isFormData: boolean = false): HeadersInit {
     const token = localStorage.getItem('accessToken');
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
+    const headers: HeadersInit = {};
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
   }
+
   private getPublicHeaders(): HeadersInit {
     return {
       'Content-Type': 'application/json',
@@ -91,11 +101,23 @@ export class UserServices {
 
     return response;
   }
+
   public async loginUser(credentials: LoginPayload): Promise<ServiceResponse<UserLoginResponse>> {
     return handleApiRequest(`${this.baseUrl}/api/v1/user/login`, {
       method: 'POST',
       headers: this.getPublicHeaders(),
       body: JSON.stringify(credentials),
+    });
+  }
+
+  public async addImage(imageFile: File): Promise<ServiceResponse<ImageUploadResponse>> {
+    const formData = new FormData();
+    formData.append('profileImage', imageFile);
+
+    return handleApiRequest(`${this.baseUrl}/api/v1/user/addImage`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(true), // Indicate FormData is used
+      body: formData,
     });
   }
 
@@ -118,6 +140,13 @@ export class UserServices {
 
     localStorage.removeItem('accessToken');
     window.location.reload();
+  }
+  public async updateBio(bio: string | undefined): Promise<ServiceResponse<BioUpdateResponse>> {
+    return handleApiRequest(`${this.baseUrl}/api/v1/user/updateBio`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ bio }),
+    });
   }
 }
 

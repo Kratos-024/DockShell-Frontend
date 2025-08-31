@@ -1,5 +1,16 @@
 import type LabInter from './types';
 
+export type AuthStateType = 'loading' | 'authenticated' | 'unauthenticated';
+
+export interface AuthContextType {
+  authState: AuthStateType;
+  setAuthState: React.Dispatch<React.SetStateAction<AuthStateType>>;
+  checkAuthStatus: () => Promise<void>;
+}
+export type BioUpdateResponse = {
+  bio: string;
+};
+
 export const labs: LabInter[] = [
   // {
   //   imgSrc: 'https://f4.bcbits.com/img/a3572376747_16.jpg',

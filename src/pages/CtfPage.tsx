@@ -58,7 +58,7 @@ export const CtfPage = ({ menuHandler, menu }: { menu: boolean; menuHandler: () 
         width: menu ? 'calc(100% - 220px)' : '100%',
       }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="min-h-screen  relative z-10 "
+      className="min-h-screen bg-black/20  relative z-10 "
       style={{
         paddingLeft: '0',
         paddingRight: '0',

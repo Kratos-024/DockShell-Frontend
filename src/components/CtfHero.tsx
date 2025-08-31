@@ -1,6 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import TerminalTypewriter from './TerminalTypeWriter';
 
 export const CtfHero = () => {
+  const navigate = useNavigate();
+  const navigationHandler = () => {
+    navigate('/ctf/level0/frostling');
+  };
   return (
     <section
       className="flex items-center px-4 mt-[96px]  relative 
@@ -51,15 +56,19 @@ export const CtfHero = () => {
                     </span>
                   </div>
                 </div>
+                <div>
+                  <span className="text-white font-semibold">Advance:</span>
+                  <span className="text-slate-600">
+                    {' '}
+                    Intermediate crypto & networking challenges.
+                  </span>
+                </div>{' '}
+              </div>
 
-                <div className="flex items-start gap-2">
-                  <div>
-                    <span className="text-white font-semibold">Intermediate:</span>
-                    <span className="text-slate-600">
-                      {' '}
-                      Advanced crypto & networking challenges.
-                    </span>
-                  </div>
+              <div className="flex items-start gap-2">
+                <div>
+                  <span className="text-white font-semibold">Intermediate:</span>
+                  <span className="text-slate-600"> Advanced cryptography & Linux.</span>
                 </div>
               </div>
 
@@ -69,8 +78,11 @@ export const CtfHero = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button className="bg-[#bbff34] hover:opacity-90 text-black cursor-pointer px-8 py-3 rounded-lg font-semibold transition-colors">
-                View Labs
+              <button
+                onClick={navigationHandler}
+                className="bg-[#bbff34] hover:opacity-90 text-black cursor-pointer px-8 py-3 rounded-lg font-semibold transition-colors"
+              >
+                Start Lab
               </button>
               <button className="border cursor-pointer border-gray-600 hover:opacity-90 hover:border-[#bbff34] text-white px-8 py-3 rounded-lg font-semibold transition-colors">
                 Join the Community

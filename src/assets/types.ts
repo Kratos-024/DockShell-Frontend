@@ -7,6 +7,10 @@ export interface LevelResponse {
     };
   };
 }
+export type ImageUploadResponse = {
+  imageUrl: string;
+};
+
 export interface ctfResponse {
   message: string;
   statusCode: number;
