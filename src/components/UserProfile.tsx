@@ -1,17 +1,27 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState } from 'react';
 import { LabSection } from './LabSection';
-import { Chart } from './Chart';
 import { CTFProgress } from './CTFProgress';
 import LevelServiceInstance from '../services/ctf.service';
 
 import type { levelPorgressResponse } from '../assets/types';
 import type LabInter from '../assets/types';
+import Chart, { type ChartProps } from './Chart';
 type UserProgressResponse =
-  | { success: true; data: levelPorgressResponse[] }
+  | {
+      success: true;
+      data: {
+        allProgress: levelPorgressResponse[];
+        skills: ChartProps;
+      };
+    }
   | { success: false; error: string };
 
 export const UserProfileHero = () => {
   const [navigation, setNavigation] = useState('Rooms');
+  const [skills, setSkills] = useState<ChartProps['skills']>([
+    { id: '', category: '', username: '', uniqueId: '' },
+  ]);
 
   const [userLabs, setUserLabs] = useState<LabInter[]>([]);
   const [levelProgressData, setLevelProgressData] = useState<levelPorgressResponse[]>([]);
@@ -22,9 +32,11 @@ export const UserProfileHero = () => {
     const fetchUserProgress = async () => {
       try {
         setIsLoading(true);
+        //@ts-ignore
         const response: UserProgressResponse = await LevelServiceInstance.getAllUserProgress();
         if (response.success && response.data) {
-          setLevelProgressData(response.data);
+          setLevelProgressData(response.data.allProgress);
+          setSkills(response.data.skills.skills);
         } else if (!response.success) {
           throw new Error(response.error || 'Failed to fetch user progress.');
         }
@@ -93,7 +105,7 @@ export const UserProfileHero = () => {
       case 'Rooms':
         return <LabSection header={'My Rooms'} labs={userLabs} />;
       case 'Skills':
-        return <Chart />;
+        return <Chart skills={skills} />;
       case 'Progress':
         return <CTFProgress levelPorgressData={levelProgressData} />;
       default:

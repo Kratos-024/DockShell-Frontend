@@ -99,18 +99,25 @@ export class UserServices {
     });
   }
 
-  public logoutUser(): void {
+  public async logoutUser(): Promise<void> {
     const token = localStorage.getItem('accessToken');
+
     if (token) {
-      // Optional: You could call a backend endpoint here to invalidate the token server-side.
-      // This is useful for security if you want to ensure the token cannot be used again,
-      // even if it was compromised before it expired.
-      // fetch(`${this.baseUrl}/api/v1/user/logout`, { method: 'POST', headers: this.getAuthHeaders() });
+      try {
+        await fetch(`${this.baseUrl}/api/v1/user/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch (error) {
+        console.error('Logout failed on server:', error);
+      }
     }
+
     localStorage.removeItem('accessToken');
-    console.log('User logged out and token removed.');
-    // To reflect logout immediately, you might want to redirect or reload the page
-    // window.location.reload();
+    window.location.reload();
   }
 }
 

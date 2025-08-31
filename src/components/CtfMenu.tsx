@@ -35,7 +35,7 @@ export const CtfMenu = ({
     return null;
   }
 
-  const levels = Array.from({ length: totalLevels }, (_, i) => i + 1);
+  const levels = Array.from({ length: totalLevels }, (_, i) => i);
 
   return (
     <>

@@ -111,7 +111,21 @@ export class LevelService {
     }
   }
   public async getAllUserProgress(): Promise<
-    { success: true; data: levelPorgressResponse[] } | { success: false; error: string }
+    | {
+        success: true;
+        data: {
+          allProgress: levelPorgressResponse[];
+          skills: {
+            skills: {
+              id: string;
+              catgory: string;
+              username: string;
+              uniqueId: string;
+            }[];
+          };
+        };
+      }
+    | { success: false; error: string }
   > {
     const url = `${this.baseUrl}/api/v1/ctf/getAllUserProgress/`;
 
@@ -143,7 +157,20 @@ export class LevelService {
         };
       }
 
-      const data: { success: true; data: levelPorgressResponse[] } = await response.json();
+      const data: {
+        success: true;
+        data: {
+          allProgress: levelPorgressResponse[];
+          skills: {
+            skills: {
+              id: string;
+              catgory: string;
+              username: string;
+              uniqueId: string;
+            }[];
+          };
+        };
+      } = await response.json();
       return data;
     } catch (error: unknown) {
       if (error instanceof Error) {

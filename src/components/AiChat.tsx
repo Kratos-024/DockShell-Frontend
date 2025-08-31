@@ -44,7 +44,11 @@ export const AIChatWidget: React.FC<AIChatWidgetProps> = ({ onSendMessage, messa
       <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={handleToggleChat}
-          className="bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-transform duration-300 ease-in-out hover:scale-110 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="bg-[#bbff34] text-black cursor-pointer
+           p-4 rounded-full shadow-lg transition-transform
+            duration-300 ease-in-out hover:scale-110 
+            focus:outline-none focus:ring-2 
+             focus:ring-offset-2"
           aria-label="Toggle AI Chat"
         >
           {isOpen ? <X size={24} /> : <Bot size={24} />}
@@ -53,7 +57,7 @@ export const AIChatWidget: React.FC<AIChatWidgetProps> = ({ onSendMessage, messa
 
       {isOpen && (
         <div className="fixed bottom-24 right-6 w-96 h-[32rem] bg-white rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out z-40 border border-gray-200">
-          <div className="bg-indigo-600 text-white p-4 rounded-t-2xl flex items-center shadow-md">
+          <div className="bg-[#bbff34] text-black p-4 rounded-t-2xl flex items-center shadow-md">
             <Bot className="mr-3" size={24} />
             <h3 className="text-lg font-semibold">AI Assistant</h3>
           </div>
@@ -68,7 +72,7 @@ export const AIChatWidget: React.FC<AIChatWidgetProps> = ({ onSendMessage, messa
                   }`}
                 >
                   <div
-                    className={` p-3 rounded-2xl ${msg.sender === 'user' ? 'bg-indigo-500 text-white rounded-br-none' : 'bg-gray-200 text-gray-800 rounded-bl-none'}`}
+                    className={` p-3 rounded-2xl ${msg.sender === 'user' ? ' text-black rounded-br-none bg-gray-200' : 'bg-gray-200 text-gray-800 rounded-bl-none'}`}
                   >
                     <p className="text-sm">{msg.text}</p>
                   </div>
@@ -86,11 +90,19 @@ export const AIChatWidget: React.FC<AIChatWidgetProps> = ({ onSendMessage, messa
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
-                className="flex-1 w-full px-4 py-2 text-sm bg-gray-100 border border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 w-full px-4 py-2 
+                 text-black text-sm bg-gray-100 border 
+                 border-transparent
+                 rounded-full focus:outline-none focus:ring-2
+                  "
               />
               <button
                 onClick={handleSendMessage}
-                className="p-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-indigo-300"
+                className="p-3 bg-[#bbff34] text-black hover:opacity-90 hover:scale-105
+                 rounded-full hover:bg-[#bbff34] cursor-pointer
+                 transition-colors focus:outline-none 
+                 focus:ring-2 
+                 focus:ring-offset-2 "
                 disabled={!inputValue.trim()}
               >
                 <Send size={18} />

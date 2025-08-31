@@ -152,8 +152,8 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
   };
 
   return (
-    <section className="px-4 py-5 bg-black/20">
-      <div className="flex items-center justify-between mb-4">
+    <section className="px-4 py-5  bg-black/20">
+      <div className="flex items-center  justify-between mb-4">
         <h2 className="text-4xl font-bold">
           {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}{' '}
           Level {levelNumber}
@@ -169,7 +169,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
         </div>
       </div>
 
-      <div className="mt-5 bg-red-300">
+      <div className="mt-5 mb-[396px]">
         <WebTerminal />
       </div>
 
@@ -191,7 +191,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
                 <span className="font-bold">Port:</span> {credentials.Port}
               </li>
               <li>
-                <span className="font-bold">Username:</span> {username}
+                <span className="font-bold">Username:</span> {credentials.username}
               </li>
               <li>
                 <span className="font-bold">Password:</span> {credentials.password}

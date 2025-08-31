@@ -56,7 +56,6 @@ export const WebTerminal = () => {
 
     socket.addEventListener('message', (event) => {
       const message = event.data.toString();
-      // Write all messages from backend directly to terminal
       terminal.write(message);
     });
 
@@ -86,19 +85,26 @@ export const WebTerminal = () => {
   }, []);
 
   return (
-    <div className="w-full  mx-auto">
-      <div className="bg-gray-200 rounded-t-lg overflow-hidden shadow-2xl">
-        <div className="h-7 bg-gradient-to-b from-gray-300 to-gray-200 flex items-center px-3 border-b border-gray-300">
+    <div className="w-full h-[520px]  mx-auto">
+      <div
+        className="bg-gray-200 rounded-xl rounded-t-lg  
+      shadow-2xl"
+      >
+        <div
+          className="h-7 bg-gradient-to-b from-gray-300 rounded-xl
+        to-gray-200 flex items-center px-3 border-b
+         border-gray-300"
+        >
           <div className="flex gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full hover:bg-red-600 cursor-pointer"></div>
             <div className="w-3 h-3 bg-yellow-400 rounded-full hover:bg-yellow-500 cursor-pointer"></div>
             <div className="w-3 h-3 bg-green-500 rounded-full hover:bg-green-600 cursor-pointer"></div>
           </div>
-          <div className="flex-1 text-center text-gray-600 text-sm font-medium">
+          <div className="flex-1 text-center  text-gray-600 text-sm font-medium">
             Terminal — zsh — 120×35
           </div>
         </div>
-        <div ref={terminalRef} className="bg-black overflow-auto" style={{ height: '600px' }} />
+        <div ref={terminalRef} className="bg-black rounded-b-xl overflow- overflow-hidden" />
       </div>
     </div>
   );

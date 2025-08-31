@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { CiMenuFries } from 'react-icons/ci';
 import { FaUserCircle, FaUser, FaSignOutAlt } from 'react-icons/fa'; // Import new icons
 import { CreateAccountModal } from './CreateAccountModal';
-import UserServicesInstance from '../services/user.service';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import UserServicesInstance from '../services/user.service';
 
 type AuthState = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -53,12 +54,24 @@ export const NavBar = ({
 
   const handleLogout = async () => {
     setIsLoading(true);
-    localStorage.removeItem('accessToken');
-    setAuthState('unauthenticated');
-    setIsUserMenuOpen(false);
-    setIsLoading(false);
-  };
 
+    try {
+      // 1. Attempt to log out from the server
+      await UserServicesInstance.logoutUser();
+
+      // 2. If successful, show a success toast
+      toast.success('You have been logged out successfully.');
+    } catch (error) {
+      // 3. If the server call fails, log the error and show an error toast
+      console.error('Server logout failed, but proceeding with client-side cleanup.', error);
+      toast.error('Could not log out from the server, but your session has been cleared locally.');
+    } finally {
+      localStorage.removeItem('accessToken');
+      setAuthState('unauthenticated');
+      setIsUserMenuOpen(false);
+      setIsLoading(false);
+    }
+  };
   const handleMyProfile = () => {
     navigate('/p/profile');
     window.location.reload();
