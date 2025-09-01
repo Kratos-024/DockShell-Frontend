@@ -13,7 +13,7 @@ export class ApiError extends Error {
 export class LevelService {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'https://cbcc52a527d8.ngrok-free.app') {
+  constructor(baseUrl: string = 'https://aa2eda87255c.ngrok-free.app') {
     this.baseUrl = baseUrl;
   }
 
