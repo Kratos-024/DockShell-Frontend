@@ -1,5 +1,6 @@
 import { Terminal } from '@xterm/xterm';
 import { useEffect, useRef } from 'react';
+import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
 
 export const WebTerminal = () => {
@@ -8,7 +9,7 @@ export const WebTerminal = () => {
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    if (!terminalRef.current) return;
+    if (!terminalRef.current || terminalInstance.current) return;
 
     const terminal = new Terminal({
       cursorBlink: true,
@@ -33,21 +34,25 @@ export const WebTerminal = () => {
         brightCyan: '#46d9ff',
         brightWhite: '#dfdfdf',
       },
-      fontSize: 18,
+      fontSize: 16,
       fontFamily:
         "SF Mono, Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
-      rows: 35,
-      cols: 120,
       lineHeight: 1.2,
     });
+
+    const fitAddon = new FitAddon();
+    terminal.loadAddon(fitAddon);
+
     terminalInstance.current = terminal;
     terminal.open(terminalRef.current);
+    fitAddon.fit();
 
     const socket = new WebSocket('wss://dockshell-backend-1.onrender.com');
     socketRef.current = socket;
+
     socket.addEventListener('open', () => {
       terminal.writeln('Last login: ' + new Date().toLocaleString());
-      terminal.writeln('Welcome to Terminal Web Interface');
+      terminal.writeln('Welcome to the Terminal Web Interface');
       terminal.writeln('Only SSH connections are allowed for security.');
       terminal.write('user@macbook ~ % ');
     });
@@ -68,41 +73,39 @@ export const WebTerminal = () => {
 
     terminal.onData((data) => {
       if (socket.readyState === WebSocket.OPEN) {
-        if (data.startsWith('{') && data.includes('connect-ssh')) {
-          socket.send(data);
-        } else {
-          socket.send(JSON.stringify({ type: 'keystroke', data: data }));
-        }
+        socket.send(JSON.stringify({ type: 'keystroke', data }));
       }
     });
 
+    const handleResize = () => {
+      fitAddon.fit();
+    };
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
+      window.removeEventListener('resize', handleResize);
       terminal.dispose();
       socket.close();
+      terminalInstance.current = null;
     };
   }, []);
 
   return (
-    <div className="w-full h-[520px]  mx-auto">
-      <div
-        className="bg-gray-200 rounded-xl rounded-t-lg  
-      shadow-2xl"
-      >
-        <div
-          className="h-7 bg-gradient-to-b from-gray-300 rounded-xl
-        to-gray-200 flex items-center px-3 border-b
-         border-gray-300"
-        >
+    <div className="w-full h-[520px] mx-auto">
+      <div className="bg-gray-200 rounded-xl rounded-t-lg shadow-2xl h-full flex flex-col">
+        <div className="h-7 bg-gradient-to-b from-gray-300 to-gray-200 flex items-center px-3 border-b border-gray-300 rounded-t-lg flex-shrink-0">
           <div className="flex gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full hover:bg-red-600 cursor-pointer"></div>
             <div className="w-3 h-3 bg-yellow-400 rounded-full hover:bg-yellow-500 cursor-pointer"></div>
             <div className="w-3 h-3 bg-green-500 rounded-full hover:bg-green-600 cursor-pointer"></div>
           </div>
-          <div className="flex-1 text-center  text-gray-600 text-sm font-medium">
-            Terminal — zsh — 120×35
-          </div>
+          <div className="flex-1 text-center text-gray-600 text-sm font-medium">Terminal — zsh</div>
         </div>
-        <div ref={terminalRef} className="bg-black rounded-b-xl overflow- overflow-hidden" />
+        <div
+          ref={terminalRef}
+          className="bg-black rounded-b-xl overflow-hidden flex-grow w-full h-full"
+        />
       </div>
     </div>
   );

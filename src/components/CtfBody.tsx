@@ -13,6 +13,7 @@ interface CtfBodyProps {
   levelData?: LevelData | null;
   nextLevelNumber?: number;
 }
+
 const SkeletonLoader = ({ className }: { className?: string }) => (
   <div className={`bg-gray-700 animate-pulse rounded-md ${className}`} />
 );
@@ -25,6 +26,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
   }>({ type: null, message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [credentials, setCredentials] = useState<LevelData['credentials'] | null>(null);
+
   useEffect(() => {
     if (levelData?.credentials) {
       setCredentials(levelData.credentials);
@@ -32,12 +34,13 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
     setFlagInput('');
     setSubmissionResult({ type: null, message: '' });
   }, [levelData]);
-  const [showNote, setShowNote] = useState(true);
 
+  const [showNote, setShowNote] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => setShowNote(false), 5000);
     return () => clearTimeout(timer);
   }, []);
+
   if (!levelData) {
     return (
       <section className="px-4 py-5 animate-pulse">
@@ -71,16 +74,13 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
       toast.error(errorMessage);
       return;
     }
-
     setIsSubmitting(true);
-
     try {
       await LevelServiceInstance.submitCtfFlag(
         levelData.ctfName,
         levelData.levelNo,
         flagInput.trim(),
       );
-
       const successMessage = `Correct! Flag accepted. Proceeding to Level ${nextLevel}`;
       setSubmissionResult({ type: 'success', message: successMessage });
       toast.success(successMessage);
@@ -92,7 +92,6 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
       } else if (error instanceof Error) {
         errorMessage = ` ${error.message}`;
       }
-
       setSubmissionResult({ type: 'error', message: errorMessage });
       toast.error(errorMessage);
       console.error('Flag submission failed:', error);
@@ -156,34 +155,15 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
   };
 
   return (
-    <section className="px-4 py-5  bg-black/20">
-      {/* <div className="flex items-center  justify-between mb-4">
-        <h2 className="text-4xl font-bold">
-          {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}{' '}
-          Level {levelNumber}
-        </h2>
-        <span>User your own CLI if this terminal doesn't work</span>
-        <div className="flex items-center gap-4">
-          <span className={`text-sm font-medium ${getDifficultyColor(levelData.difficulty)}`}>
-            {levelData.difficulty.toUpperCase()}
-          </span>
-          <span className="text-sm text-gray-400">
-            {getCategoryIcon(levelData.category)} {levelData.category}
-          </span>
-          <span className="text-sm text-gray-400">⏱️ ~{levelData.estimatedTime} min</span>
-        </div>
-      </div> */}
+    <section className="px-4 py-5 bg-black/20">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <h2 className="text-4xl font-bold">
           {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}{' '}
           Level {levelNumber}
         </h2>
-
         <div className="flex flex-wrap items-center gap-4">
           <span
-            className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(
-              levelData.difficulty,
-            )}`}
+            className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(levelData.difficulty)}`}
           >
             {levelData.difficulty.toUpperCase()}
           </span>
@@ -204,7 +184,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
         </div>
       )}
 
-      <div className="mt-5 mb-[396px]">
+      <div className="my-5">
         <WebTerminal />
       </div>
 
@@ -216,8 +196,8 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
         </div>
 
         {credentials && (
-          <div className=" text-white p-4 -xl ">
-            <p className="text-lg font-semibold"> Credentials</p>
+          <div className="text-white p-4 -xl">
+            <p className="text-lg font-semibold">Credentials</p>
             <ul className="mt-2 space-y-1">
               <li>
                 <span className="font-bold">Host:</span> {credentials.host}
@@ -237,7 +217,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
         {+levelNumber === 0 && credentials && (
           <div className="mt-6">
-            <p className="text-lg font-semibold"> Connect with SSH:</p>
+            <p className="text-lg font-semibold">Connect with SSH:</p>
             <pre className="bg-slate-800 text-green-400 p-3 rounded-lg mt-2 overflow-x-auto">
               ssh {credentials.username}@{credentials.host} -p {credentials.Port}
             </pre>
@@ -246,7 +226,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
         {levelData.commands && levelData.commands.length > 0 && (
           <div className="mt-6">
-            <p className="text-lg font-semibold"> Useful Commands:</p>
+            <p className="text-lg font-semibold">Useful Commands:</p>
             <div className="flex flex-wrap gap-2 mt-3">
               {levelData.commands.map((command, index) => (
                 <div key={index} className="p-1 rounded-lg">
@@ -257,14 +237,13 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
           </div>
         )}
 
-        <div className="mt-8 p-6 rounded-xl ">
+        <div className="mt-8 p-6 rounded-xl">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white"> Submit Flag</h3>
+            <h3 className="text-xl font-bold text-white">Submit Flag</h3>
             <span className="text-sm text-gray-400">
               Level {levelNumber} → Level {nextLevel}
             </span>
           </div>
-
           <div className="flex gap-3 mb-4">
             <input
               type="text"
@@ -286,11 +265,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             <button
               onClick={handleFlagSubmit}
               disabled={isSubmitting}
-              className="px-6 py-3 bg-[#bbff34] 
-               hover:bg-[#97d41b]  cursor-pointer
-                 disabled:cursor-not-allowed text-black
-                  rounded-lg font-medium transition-colors
-                   flex items-center gap-2"
+              className="px-6 py-3 bg-[#bbff34] hover:bg-[#97d41b] cursor-pointer disabled:cursor-not-allowed text-black rounded-lg font-medium transition-colors flex items-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -298,11 +273,10 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
                   <span>Submitting...</span>
                 </>
               ) : (
-                <> Submit</>
+                'Submit'
               )}
             </button>
           </div>
-
           {submissionResult.type && (
             <div
               className={`p-4 rounded-lg flex items-center gap-3 transition-all duration-300 ${
@@ -321,7 +295,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
         {levelData.hints && levelData.hints.length > 0 && (
           <div className="mt-6 text-slate-600">
-            <p className="text-lg font-semibold"> Hints:</p>
+            <p className="text-lg font-semibold">Hints:</p>
             <ul className="list-disc list-inside space-y-1">
               {levelData.hints.map((hint, index) => (
                 <li key={index}>{hint}</li>
@@ -348,7 +322,8 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             </div>
           </div>
         )}
-        <div className="mt-9">Note: If Terminal doesn't working use either pc or termux</div>
+
+        <div className="mt-9">Note: If Terminal doesn't work, use either PC or Termux</div>
         <ChatProvider />
       </div>
     </section>
