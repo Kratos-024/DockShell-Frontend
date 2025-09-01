@@ -5,7 +5,7 @@ export const Footer = () => {
   const { ctfLevel } = useParams();
   return (
     <footer>
-      <div className="bg-black/20 w-full" style={{ '--radius': '0.5rem' } as React.CSSProperties}>
+      <div className=" w-full" style={{ '--radius': '0.5rem' } as React.CSSProperties}>
         <div
           className="preview flex  w-full
          justify-center pt-[96px]  items-center"
