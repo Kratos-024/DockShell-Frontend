@@ -32,7 +32,12 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
     setFlagInput('');
     setSubmissionResult({ type: null, message: '' });
   }, [levelData]);
+  const [showNote, setShowNote] = useState(true);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setShowNote(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
   if (!levelData) {
     return (
       <section className="px-4 py-5 animate-pulse">
@@ -175,7 +180,6 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
           <span className="text-indigo-600">Level {levelNumber}</span>
         </h2>
 
-        {/* Info Section */}
         <div className="flex flex-wrap items-center gap-4">
           <span
             className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(
@@ -193,12 +197,13 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
         </div>
       </div>
 
-      {/* Note Section */}
-      <div className="mb-6">
-        <div className="flex items-start gap-2 bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded-lg text-sm">
-          ⚠️ <span>Note: Use your own CLI if this terminal doesn’t work.</span>
+      {showNote && (
+        <div className="mb-6 transition-opacity duration-500">
+          <div className="flex items-start gap-2 bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded-lg text-sm shadow-sm">
+            ⚠️ <span>Note: Use your own CLI if this terminal doesn’t work.</span>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="mt-5 mb-[396px]">
         <WebTerminal />
