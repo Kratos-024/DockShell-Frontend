@@ -1,114 +1,46 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useEffect, useState, useRef, type ChangeEvent } from 'react';
+import { useState, useRef, type ChangeEvent } from 'react';
 import { LabSection } from './LabSection';
 import { CTFProgress } from './CTFProgress';
-import LevelServiceInstance from '../services/ctf.service';
 import UserServicesInstance from '../services/user.service';
 import type { levelPorgressResponse } from '../assets/types';
-import type LabInter from '../assets/types';
 import Chart, { type ChartProps } from './Chart';
+import type LabInter from '../assets/types';
 
-type UserProgressResponse =
-  | {
-      success: true;
-      data: {
-        allProgress: levelPorgressResponse[];
-        skills: ChartProps;
-      };
-    }
-  | { success: false; error: string };
+type UserProfileHeroProps = {
+  profileData: {
+    allProgress: levelPorgressResponse[];
+    skills: ChartProps['skills'];
+    username: string;
+    bio?: string;
+    profileImage?: string;
+  };
+  userLabs: LabInter[];
+};
 
-export const UserProfileHero = () => {
+export const UserProfileHero = ({ profileData, userLabs }: UserProfileHeroProps) => {
   const [navigation, setNavigation] = useState('Rooms');
-  const [skills, setSkills] = useState<ChartProps['skills']>([
-    { id: '', category: '', username: '', uniqueId: '' },
-  ]);
-  const [userLabs, setUserLabs] = useState<LabInter[]>([]);
-  const [levelProgressData, setLevelProgressData] = useState<levelPorgressResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [profileImage, setProfileImage] = useState<string | undefined>(
-    'https://secure.gravatar.com/avatar/0a36713aa63972a957a0eb366e8b0194.jpg?s=200&d=robohash&r=x',
-  );
-  const [username, setUsername] = useState<string | undefined>('');
 
-  const [bio, setBio] = useState<string | undefined>('');
+  const [profileImage, setProfileImage] = useState<string | undefined>(
+    profileData.profileImage ||
+      'https://secure.gravatar.com/avatar/0a36713aa63972a957a0eb366e8b0194.jpg?s=200&d=robohash&r=x',
+  );
+  const [bio, setBio] = useState<string | undefined>(profileData.bio);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const fetchUserProgress = async () => {
-      try {
-        setIsLoading(true);
-        //@ts-ignore
-        const response: UserProgressResponse = await LevelServiceInstance.getAllUserProgress();
-        if (response.success && response.data) {
-          setBio(response.data.skills.bio);
-
-          setUsername(response.data.skills.username);
-          if (response.data.skills.profileImage) {
-            setProfileImage(response.data.skills.profileImage);
-          }
-
-          setLevelProgressData(response.data.allProgress);
-          setSkills(response.data.skills.skills);
-        } else if (!response.success) {
-          throw new Error(response.error || 'Failed to fetch user progress.');
-        }
-      } catch (err: unknown) {
-        console.error('Error fetching progress:', err);
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('An unexpected error occurred.');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUserProgress();
-  }, []);
-
-  useEffect(() => {
-    if (levelProgressData.length === 0) {
-      return;
-    }
-    const fetchAndFilterCtfs = async () => {
-      try {
-        const response = await LevelServiceInstance.getCtf();
-        if ('data' in response && response.data) {
-          const userCtfNames = new Set(
-            levelProgressData.map((progress) => progress.ctfName.toLowerCase()),
-          );
-          const filteredLabs = response.data.filter((lab) =>
-            userCtfNames.has(lab.ctfName.toLowerCase()),
-          );
-          setUserLabs(filteredLabs);
-        } else {
-          throw new Error((response as { error: string }).error || 'Failed to fetch CTF list.');
-        }
-      } catch (err: unknown) {
-        console.error('Error fetching CTFs:', err);
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('An error occurred while filtering labs.');
-        }
-      }
-    };
-    fetchAndFilterCtfs();
-  }, [levelProgressData]);
+  const [error, setError] = useState<string | null>(null);
 
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
-      setProfileImage(URL.createObjectURL(file));
+      setProfileImage(URL.createObjectURL(file)); // Optimistic UI update
 
       const response = await UserServicesInstance.addImage(file);
       if (response.error) {
         setError(response.error);
         setProfileImage(
-          'https://secure.gravatar.com/avatar/0a36713aa63972a957a0eb366e8b0194.jpg?s=200&d=robohash&r=x',
+          profileData.profileImage ||
+            'https://secure.gravatar.com/avatar/0a36713aa63972a957a0eb366e8b0194.jpg?s=200&d=robohash&r=x',
         );
       } else if (response.data) {
         setProfileImage(response.data.imageUrl);
@@ -123,13 +55,14 @@ export const UserProfileHero = () => {
   const handleBioChange = (event: ChangeEvent<HTMLInputElement>) => {
     setBio(event.target.value);
   };
-  //@ts-ignore
-  const handleBioKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
+
+  const handleBioKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       setIsEditingBio(false);
       const response = await UserServicesInstance.updateBio(bio);
       if (response.error) {
         setError(response.error);
+        setBio(profileData.bio);
       }
     }
   };
@@ -139,9 +72,6 @@ export const UserProfileHero = () => {
   };
 
   const renderContent = () => {
-    if (isLoading) {
-      return <div className="text-center p-8 text-white">Loading your profile...</div>;
-    }
     if (error) {
       return <div className="text-center p-8 text-red-500">Error: {error}</div>;
     }
@@ -149,9 +79,9 @@ export const UserProfileHero = () => {
       case 'Rooms':
         return <LabSection header={'My Rooms'} labs={userLabs} />;
       case 'Skills':
-        return <Chart skills={skills} />;
+        return <Chart skills={profileData.skills} />;
       case 'Progress':
-        return <CTFProgress levelPorgressData={levelProgressData} />;
+        return <CTFProgress levelPorgressData={profileData.allProgress} />;
       default:
         return null;
     }
@@ -162,7 +92,7 @@ export const UserProfileHero = () => {
       <div className="relative">
         <img
           className="w-full object-cover h-[200px] sm:h-[250px] md:h-[300px] lg:h-[340px]"
-          src="https://media.gettyimages.com/id/1798302631/video/no-tv-signal-vhs-noise-glitch-screen-overlay-grunge-old-tv-background.jpg?s=640x640&k=20&c=yrNzn6bNDtn7XWeLiVMkfNg9RhFUWHfwtyDiaXS5eaI="
+          src="https://media.gettyimages.com/id/1798302631/video/no-tv-signal-vhs-noise-glitch-screen-overlay-grunge-old-tv-background.jpg?s=640x640&k=20&c=yrNzn7XWeLiVMkfNg9RhFUWHfwtyDiaXS5eaI="
           alt="user-profile-hero"
         />
         <div className="flex flex-col lg:flex-row items-start gap-3 sm:gap-4 md:gap-6 px-2 sm:px-4 md:px-6 lg:px-8 -mt-8 sm:-mt-12 md:-mt-16 lg:-mt-20 relative z-10">
@@ -184,7 +114,7 @@ export const UserProfileHero = () => {
           <div className="flex-1 flex flex-col lg:flex-row justify-between items-center lg:items-start text-center lg:text-left mt-2 sm:mt-4 md:mt-6 lg:mt-20 xl:mt-[86px] w-full">
             <div className="flex flex-col gap-1 sm:gap-2 mb-3 sm:mb-4 lg:mb-2">
               <h1 className="text-white font-bold whitespace-nowrap text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
-                {username}
+                {profileData.username}
               </h1>
               {isEditingBio ? (
                 <input
@@ -201,7 +131,7 @@ export const UserProfileHero = () => {
                   className="text-gray-300 mb-2 sm:mb-4 md:mb-6 text-sm sm:text-base lg:text-lg cursor-pointer"
                   onClick={() => setIsEditingBio(true)}
                 >
-                  {bio}
+                  {bio || 'Click to add a bio'}
                 </p>
               )}
             </div>
