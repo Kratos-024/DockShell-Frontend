@@ -31,11 +31,7 @@ type DifficultyLevel = 'entry' | 'medium' | 'hard';
 
 const Chart = ({ skills = [] }: ChartProps) => {
   const [level, setLevel] = useState<DifficultyLevel>('entry');
-
-  // All possible categories
   const allCategories = ['filEexploration', 'crypto', 'binary', 'forensics', 'web', 'network'];
-
-  // Create skill count map from user's actual skills
   const skillCounts: Record<string, number> = allCategories.reduce(
     (acc, category) => {
       acc[category] = skills.filter((skill) => skill.category === category).length;
@@ -44,7 +40,8 @@ const Chart = ({ skills = [] }: ChartProps) => {
     {} as Record<string, number>,
   );
 
-  // Generate dynamic chart data based on actual skills
+  const hasAnySkills = skills.length > 0;
+  const totalSkillCount = Object.values(skillCounts).reduce((sum, count) => sum + count, 0);
   const generateChartData = (difficultyLevel: DifficultyLevel) => {
     const multipliers: Record<DifficultyLevel, number> = {
       entry: 5,
@@ -54,7 +51,7 @@ const Chart = ({ skills = [] }: ChartProps) => {
 
     const data = allCategories.map((category) => {
       const baseCount = skillCounts[category];
-      return baseCount * multipliers[difficultyLevel];
+      return hasAnySkills ? baseCount * multipliers[difficultyLevel] : 0;
     });
 
     const colors: Record<DifficultyLevel, { bg: string; border: string }> = {
@@ -110,7 +107,7 @@ const Chart = ({ skills = [] }: ChartProps) => {
     scales: {
       r: {
         beginAtZero: true,
-        max: Math.max(10, Math.max(...Object.values(skillCounts)) * 3),
+        max: hasAnySkills ? Math.max(10, Math.max(...Object.values(skillCounts)) * 3) : 10,
         angleLines: {
           color: 'rgba(255, 255, 255, 0.2)',
         },
@@ -133,7 +130,7 @@ const Chart = ({ skills = [] }: ChartProps) => {
       <div className="text-center mb-6">
         <h2 className="text-white text-3xl font-bold mb-2">My Security Skills</h2>
         <p className="text-gray-400">
-          Total skills: {skills.length} across{' '}
+          Total skills: {totalSkillCount} across{' '}
           {Object.values(skillCounts).filter((count) => count > 0).length} categories
         </p>
       </div>
@@ -175,10 +172,13 @@ const Chart = ({ skills = [] }: ChartProps) => {
         <Radar data={generateChartData(level)} options={options} />
       </div>
 
-      {skills.length === 0 && (
-        <p className="text-gray-400 mt-4">
-          No skills data available. Complete some CTF levels to see your progress!
-        </p>
+      {!hasAnySkills && (
+        <div className="text-center mt-6 p-8 bg-gray-800/50 rounded-lg">
+          <p className="text-gray-400 text-lg mb-2">No skills data available yet</p>
+          <p className="text-gray-500">
+            Complete some CTF challenges to start building your skill profile!
+          </p>
+        </div>
       )}
     </div>
   );

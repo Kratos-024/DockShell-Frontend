@@ -145,7 +145,6 @@ export const CreateAccountModal = ({
       [name]: fieldError,
     }));
   };
-
   useEffect(() => {
     if (touched.confirmPassword && createAccount) {
       const confirmPasswordError = validateField('confirmPassword', formData.confirmPassword);
@@ -157,7 +156,6 @@ export const CreateAccountModal = ({
   }, [formData.password, formData.confirmPassword, touched.confirmPassword, createAccount]);
 
   const handleSubmit = async () => {
-    // Mark all fields as touched
     const allFields = createAccount
       ? ['firstName', 'lastName', 'username', 'email', 'password', 'confirmPassword']
       : ['username', 'password'];
@@ -168,11 +166,9 @@ export const CreateAccountModal = ({
     });
     setTouched(newTouched);
 
-    // Validate all fields
     const formErrors = validateForm();
     setErrors(formErrors);
 
-    // Check if there are any errors
     const hasErrors = Object.values(formErrors).some((error) => error !== undefined);
     if (hasErrors) {
       toast.error('Please fix the validation errors before submitting.');
