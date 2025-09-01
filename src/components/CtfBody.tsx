@@ -174,10 +174,9 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
         </div>
       </div> */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-        {/* Title */}
-        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
+        <h2 className="text-4xl font-bold">
           {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}{' '}
-          <span className="text-indigo-600">Level {levelNumber}</span>
+          Level {levelNumber}
         </h2>
 
         <div className="flex flex-wrap items-center gap-4">
