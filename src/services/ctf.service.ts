@@ -13,7 +13,7 @@ export class ApiError extends Error {
 export class LevelService {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'http://localhost:8080') {
+  constructor(baseUrl: string = 'https://dockshell-backend-1.onrender.com') {
     this.baseUrl = baseUrl;
   }
 
