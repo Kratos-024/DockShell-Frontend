@@ -43,7 +43,7 @@ export const WebTerminal = () => {
     terminalInstance.current = terminal;
     terminal.open(terminalRef.current);
 
-    const socket = new WebSocket('wss://dockshell-backend-1.onrender.com.ngrok-free.app');
+    const socket = new WebSocket('wss://dockshell-backend-1.onrender.com');
     socketRef.current = socket;
     socket.addEventListener('open', () => {
       terminal.writeln('Last login: ' + new Date().toLocaleString());
