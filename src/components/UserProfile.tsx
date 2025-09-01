@@ -46,7 +46,10 @@ export const UserProfileHero = () => {
           setBio(response.data.skills.bio);
 
           setUsername(response.data.skills.username);
-          setProfileImage(response.data.skills.profileImage);
+          if (response.data.skills.profileImage) {
+            setProfileImage(response.data.skills.profileImage);
+          }
+
           setLevelProgressData(response.data.allProgress);
           setSkills(response.data.skills.skills);
         } else if (!response.success) {
