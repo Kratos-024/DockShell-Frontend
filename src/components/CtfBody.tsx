@@ -152,11 +152,12 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
   return (
     <section className="px-4 py-5  bg-black/20">
-      <div className="flex items-center  justify-between mb-4">
+      {/* <div className="flex items-center  justify-between mb-4">
         <h2 className="text-4xl font-bold">
           {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}{' '}
           Level {levelNumber}
         </h2>
+        <span>User your own CLI if this terminal doesn't work</span>
         <div className="flex items-center gap-4">
           <span className={`text-sm font-medium ${getDifficultyColor(levelData.difficulty)}`}>
             {levelData.difficulty.toUpperCase()}
@@ -165,6 +166,37 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
             {getCategoryIcon(levelData.category)} {levelData.category}
           </span>
           <span className="text-sm text-gray-400">⏱️ ~{levelData.estimatedTime} min</span>
+        </div>
+      </div> */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        {/* Title */}
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
+          {levelData.ctfName.charAt(0).toUpperCase() + levelData.ctfName.slice(1).toLowerCase()}{' '}
+          <span className="text-indigo-600">Level {levelNumber}</span>
+        </h2>
+
+        {/* Info Section */}
+        <div className="flex flex-wrap items-center gap-4">
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(
+              levelData.difficulty,
+            )}`}
+          >
+            {levelData.difficulty.toUpperCase()}
+          </span>
+          <span className="text-sm text-gray-500 flex items-center gap-1">
+            {getCategoryIcon(levelData.category)} {levelData.category}
+          </span>
+          <span className="text-sm text-gray-500 flex items-center gap-1">
+            ⏱️ ~{levelData.estimatedTime} min
+          </span>
+        </div>
+      </div>
+
+      {/* Note Section */}
+      <div className="mb-6">
+        <div className="flex items-start gap-2 bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded-lg text-sm">
+          ⚠️ <span>Note: Use your own CLI if this terminal doesn’t work.</span>
         </div>
       </div>
 
