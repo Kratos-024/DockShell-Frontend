@@ -9,7 +9,7 @@ import { StatsSection } from '../components/StatsSection';
 //   console.log('🚀 Starting API test...');
 
 //   try {
-//     const response = await fetch('https://0a74dc66cc29.ngrok-free.app/api/v1/ctf/getCtf', {
+//     const response = await fetch('https://693be3fa9558.ngrok-free.app/api/v1/ctf/getCtf', {
 //       method: 'GET',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ import { StatsSection } from '../components/StatsSection';
 //   console.log('🎫 Token found:', token.substring(0, 20) + '...');
 
 //   try {
-//     const response = await fetch('https://0a74dc66cc29.ngrok-free.app/api/v1/ctf/getCtf', {
+//     const response = await fetch('https://693be3fa9558.ngrok-free.app/api/v1/ctf/getCtf', {
 //       method: 'GET',
 //       headers: {
 //         'Content-Type': 'application/json',

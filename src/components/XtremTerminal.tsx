@@ -40,11 +40,10 @@ export const WebTerminal = () => {
       cols: 120,
       lineHeight: 1.2,
     });
-
     terminalInstance.current = terminal;
     terminal.open(terminalRef.current);
 
-    const socket = new WebSocket('wss://0a74dc66cc29.ngrok-free.app');
+    const socket = new WebSocket('wss://693be3fa9558.ngrok-free.app');
     socketRef.current = socket;
     socket.addEventListener('open', () => {
       terminal.writeln('Last login: ' + new Date().toLocaleString());
