@@ -58,7 +58,6 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
 
   const levelNumber = levelData.uniqueId.split('-level')[1] || '0';
   const nextLevel = nextLevelNumber || parseInt(levelNumber) + 1;
-  const username = `level${levelNumber}`;
 
   const handleFlagSubmit = async () => {
     if (!flagInput.trim()) {
@@ -204,7 +203,7 @@ export const CtfBody = ({ levelData, nextLevelNumber }: CtfBodyProps) => {
           <div className="mt-6">
             <p className="text-lg font-semibold"> Connect with SSH:</p>
             <pre className="bg-slate-800 text-green-400 p-3 rounded-lg mt-2 overflow-x-auto">
-              ssh {username}@{credentials.host} -p {credentials.Port}
+              ssh {credentials.username}@{credentials.host} -p {credentials.Port}
             </pre>
           </div>
         )}
