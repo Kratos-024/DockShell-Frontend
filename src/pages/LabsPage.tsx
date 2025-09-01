@@ -11,7 +11,7 @@ async function debugApiResponse() {
   console.log('🔍 Debugging API response...');
 
   try {
-    const response = await fetch('https://aa2eda87255c.ngrok-free.app/api/v1/ctf/getCtf', {
+    const response = await fetch('https://0a74dc66cc29.ngrok-free.app/api/v1/ctf/getCtf', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ async function testServerHealth() {
   console.log('\n🏥 Testing server health...');
 
   try {
-    const response = await fetch('https://aa2eda87255c.ngrok-free.app/', {
+    const response = await fetch('https://0a74dc66cc29.ngrok-free.app/', {
       method: 'GET',
       headers: {
         'ngrok-skip-browser-warning': 'true',

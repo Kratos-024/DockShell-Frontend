@@ -44,7 +44,7 @@ export const WebTerminal = () => {
     terminalInstance.current = terminal;
     terminal.open(terminalRef.current);
 
-    const socket = new WebSocket('wss://aa2eda87255c.ngrok-free.app');
+    const socket = new WebSocket('wss://0a74dc66cc29.ngrok-free.app');
     socketRef.current = socket;
     socket.addEventListener('open', () => {
       terminal.writeln('Last login: ' + new Date().toLocaleString());
