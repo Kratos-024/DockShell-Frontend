@@ -168,7 +168,6 @@ export const UserProfileHero = () => {
         <div className="flex flex-col lg:flex-row items-start gap-3 sm:gap-4 md:gap-6 px-2 sm:px-4 md:px-6 lg:px-8 -mt-8 sm:-mt-12 md:-mt-16 lg:-mt-20 relative z-10">
           <div className="relative mx-auto lg:mx-0">
             <img
-              loading="lazy"
               className="rounded-full object-cover border-4 border-white shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 lg:w-48 lg:h-48 xl:w-[246px] xl:h-[246px] cursor-pointer"
               src={profileImage}
               alt="profile"
