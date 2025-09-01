@@ -94,26 +94,24 @@ export class UserServices {
   }
 
   public async validateSession(): Promise<ServiceResponse<ValidationPayload>> {
-    console.log(' Validating session with ngrok headers...');
+    console.log('Validating session...');
 
     const response = await handleApiRequest<ValidationPayload>(
       `${this.baseUrl}/api/v1/user/validate`,
       {
         method: 'GET',
-        headers: this.getHeaders(false, true), // Include both ngrok and auth headers
+        headers: this.getHeaders(false, true),
       },
     );
 
     if (response.error) {
-      console.log(' Session validation failed:', response.error);
-      localStorage.removeItem('accessToken');
+      console.log('Session validation failed:', response.error);
     } else {
       console.log('✅ Session validation successful');
     }
 
-    return response;
+    return response; // Simply return the response, whatever it is.
   }
-
   public async loginUser(credentials: LoginPayload): Promise<ServiceResponse<UserLoginResponse>> {
     return handleApiRequest(`${this.baseUrl}/api/v1/user/login`, {
       method: 'POST',

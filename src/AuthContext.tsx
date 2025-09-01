@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     const response = await UserServicesInstance.validateSession();
+
     if (response.data && !response.error) {
       setAuthState('authenticated');
     } else {
