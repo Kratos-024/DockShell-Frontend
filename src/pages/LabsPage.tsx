@@ -30,9 +30,7 @@ export const CtfsPage = ({
     const getCtfHandler = async () => {
       try {
         const response = await LevelServiceInstance.getCtf();
-        console.log(response);
         if ('data' in response) {
-          console.log(response);
           setLabs(response.data);
         } else {
           console.error(response.error);

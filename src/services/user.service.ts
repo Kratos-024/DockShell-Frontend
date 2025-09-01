@@ -94,8 +94,6 @@ export class UserServices {
   }
 
   public async validateSession(): Promise<ServiceResponse<ValidationPayload>> {
-    console.log('Validating session...');
-
     const response = await handleApiRequest<ValidationPayload>(
       `${this.baseUrl}/api/v1/user/validate`,
       {
@@ -107,10 +105,10 @@ export class UserServices {
     if (response.error) {
       console.log('Session validation failed:', response.error);
     } else {
-      console.log('✅ Session validation successful');
+      console.log('');
     }
 
-    return response; // Simply return the response, whatever it is.
+    return response;
   }
   public async loginUser(credentials: LoginPayload): Promise<ServiceResponse<UserLoginResponse>> {
     return handleApiRequest(`${this.baseUrl}/api/v1/user/login`, {

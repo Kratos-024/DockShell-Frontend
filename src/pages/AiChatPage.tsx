@@ -14,8 +14,8 @@ export const ChatProvider = () => {
 
   useEffect(() => {
     ws.current = new WebSocket('wss://dockshell-backend-1.onrender.com');
-    ws.current.onopen = () => console.log('WebSocket Connected');
-    ws.current.onclose = () => console.log('WebSocket Disconnected');
+    ws.current.onopen = () => console.log('');
+    ws.current.onclose = () => console.log('');
     ws.current.onmessage = (event) => {
       try {
         const received = JSON.parse(event.data);

@@ -217,7 +217,6 @@ export class LevelService {
       }
 
       const data: ctfResponse = await response.json();
-      console.log('✅ CTF Data received:', data);
       return data;
     } catch (error: unknown) {
       if (error instanceof Error) {
